@@ -22,6 +22,31 @@ console.log(
     chalk.magenta("FUN")
 );
 
+
+/*
+*   --- Routing & Validation ---
+*/
+
+// Validate initial input (projectName)
+const args = process.argv.slice(2);
+
+if (args.length < 1) {
+  console.error("Try: npx zou create myProject");
+  process.exit(1); //an error occurred
+}
+else if (args.length > 2) {
+  console.error("No spaces please. myProject, my-file, is the way ;)");
+  process.exit(1); //an error occurred
+}
+else if (args[0] == "create") {
+
+/*
+*
+*  Scaffold a new Project in it's folder
+*  npx zou create myWebsite
+*
+*/
+
 /*
 *   --- Prompt ---
 */
@@ -59,18 +84,7 @@ console.log(answers.author + " is looking for " + answers.styles + " and " + ans
 *   --- Creating Folders ---
 */
 
-// Validate initial input (projectName)
-const args = process.argv.slice(2);
-if (args.length < 1) {
-  console.error("Name your project: npx zou-create myProject");
-  process.exit(1); //an error occurred
-}
-if (args.length > 1) {
-  console.error("No spaces please. myProject, my-project, is the way ;)");
-  process.exit(1); //an error occurred
-}
-
-let projectName = args[0];
+let projectName = args[1];
 const project = `./${projectName}`;
 
 fs.mkdirSync(`./${project}`);
@@ -745,3 +759,70 @@ fs.writeFile(pkgJson, pkgJsonContent, (err) => {
   if (err) throw err;
   // package.json Created!
 });
+
+// End:  zou create myProject
+} else if (args[0] == "newFile") {
+
+/*
+*
+*  Scaffold a new Page in src/pages
+*  npx zou create myWebsite
+*
+*/
+
+/*
+*   --- Prompt ---
+*/
+
+const answersPage = {
+  //project: await input({ message: "Project: " }),
+  file: await input({ message: "Name: ", default: "newFile" }),
+  type: await select({
+    message: 'What Type?',
+    choices: [
+      { 
+        name: 'Data', 
+        value: 'data',
+        description: '...strings or arrays for .njk use.', 
+      },
+      { 
+        name: 'Layout', 
+        value: 'layout',
+        description: '...the HTML around the page\'s content. ',
+      },
+      { 
+        name: 'Page', 
+        value: 'page',
+        description: '...the main content of a page',
+      },
+      { 
+        name: 'Partial', 
+        value: 'partial',
+        description: '... .njk fragment to include elsewhere',
+      },
+    ],
+  }),
+};
+
+
+console.log(`Ok, we\'ll create the ${answersPage.file} ${answersPage.type}`)
+
+
+if (answersPage.type == "layout") {
+
+// FILE: --- newLayout ---
+
+let newLayout = `./src/layouts/${answersPage.file}`;
+let newLayoutContent = `<doctype! HTML>`;
+fs.writeFile(newLayout, newLayoutContent, (err) => {
+  if (err) throw err;
+  // tailwind.config.ts Created!
+});
+
+}
+
+
+
+
+
+}

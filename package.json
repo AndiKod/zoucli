@@ -1,13 +1,14 @@
 {
-  "name": "zoucli",
+  "name": "zou",
   "version": "1.0.0",
-  "description": "",
+  "description": "Testing a new version",
   "main": "bin/index.mjs",
   "bin": {
-    "create": "bin/index.mjs",
-    "init": "bin/init.mjs"
+    "zou": "bin/index.mjs"
   },
-  "files": ["bin"],
+  "files": [
+    "bin/index.mjs"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
