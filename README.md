@@ -6,6 +6,7 @@ Scaffold a custom Zou! SSG Boilerplate or and more with interactive prompt.
 
 Simple SSG setup, with close to zero configuration or dependencies but flexible enough to craft web projects or fire a quick sandbox and try things from a curated list of CDN's, Macros & Mixins.
 
+
 | -Folder- | -Purpose-    |
 | --- | --- |
 | **Data:** | Add data in .js / load in zou.config.js / use in .njk templates |
@@ -49,7 +50,7 @@ The prompt will ask:
 
 <details>
   <summary>Play with some CDN</summary>
-  <p>Pick one or more CDNs like ChotaCSS, Bootstrap, AlpineJS, PocketBase, htmX (I know), from zouMacros package. You can also add/remove them easily afterwards by adding/removing things like `{{ cdn.pkg('bulma')}}` in the head section of a layout.</p>
+  <p>Pick (By pressing the Spacebar!)one or more CDNs like ChotaCSS, Bootstrap, AlpineJS, PocketBase, htmX (I know), from zouMacros package. You can also add/remove them easily afterwards by adding/removing things like `{{ cdn.pkg('bulma')}}` in the head section of a layout.</p>
 </details>
 
 <details>

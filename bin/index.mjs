@@ -93,19 +93,21 @@ const answers = {
       },
     ],
   }),
+  
   cdn: await checkbox({
     message: 'Play with some CDN',
     choices: [
-      new Separator('--- CSS ---'),
-      {name: 'Chota', value: 'chota'},
-      {name: 'Bonzai', value: 'bonzai'},
-      {name: 'Bootstrap', value: 'bootstrap'},
       new Separator('--- JS ---'),
       {name: 'AlpineJS', value: 'alpine'},
       {name: 'PocketBase', value: 'pocketbase'},
       {name: 'htmX', value: 'htmx'},
+      new Separator('--- CSS ---'),
+      {name: 'Chota', value: 'chota'},
+      {name: 'Bonzai', value: 'bonzai'},
+      {name: 'Bootstrap', value: 'bootstrap'},
     ]
   }),
+  
   vscode: await select({
     message: 'Open in VSCode?',
     choices: [
@@ -249,8 +251,9 @@ let pgLayoutsBaseContent = `<!DOCTYPE html>
     ${cssFile}
     <script src=\"https://unpkg.com/hyperscript.org@0.9.12\"></script>
 
-    {% import 'node_modules/zoumacros/lib/cdn.njk' as cdn; %}
+    {% import '../../node_modules/zoumacros/lib/cdn.njk'as cdn %}
     ${cdn}
+    
     {% block headStyles %}{% endblock %}
     {% block headScripts %}{% endblock %}
     </head>
