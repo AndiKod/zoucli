@@ -98,7 +98,7 @@ const answers = {
     message: 'Play with some CDN',
     choices: [
       new Separator('--- JS ---'),
-      {name: 'AlpineJS', value: 'alpine'},
+      {name: 'AlpineJS', value: 'alpinejs'},
       {name: 'PocketBase', value: 'pocketbase'},
       {name: 'htmX', value: 'htmx'},
       new Separator('--- CSS ---'),
