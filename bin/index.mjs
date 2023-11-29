@@ -4,14 +4,19 @@
 import chalk from "chalk";
 import { input } from '@inquirer/prompts';
 import select, { Separator } from '@inquirer/select';
+import confirm from '@inquirer/confirm';
+import checkbox from '@inquirer/checkbox';
+import {$} from 'zx';
 import rawlist from '@inquirer/rawlist';
 import fs from 'fs';
+import process from "process";
+
 
 /*
 *   --- Header ---
 */
 
-console.log(chalk.magenta.bold("-- Zou!", chalk.yellow("CLI --")));
+console.log(chalk.bold.green("-== Zou! CLI ==-"));
 console.log(
   chalk.red("HTML") +
     "," +
@@ -19,7 +24,7 @@ console.log(
     "," +
     chalk.yellow("JS") +
     " & " +
-    chalk.magenta("FUN")
+    chalk.magenta("FUN\n")
 );
 
 
@@ -31,21 +36,25 @@ console.log(
 const args = process.argv.slice(2);
 
 if (args.length < 1) {
-  console.error("Try: npx zou create myProject");
+  console.error("Check docs: github");
   process.exit(1); //an error occurred
 }
 else if (args.length > 2) {
   console.error("No spaces please. myProject, my-file, is the way ;)");
   process.exit(1); //an error occurred
 }
-else if (args[0] == "create") {
 
+
+
+// #create
+else if (args[0] == "create") {
 /*
 *
 *  Scaffold a new Project in it's folder
 *  npx zou create myWebsite
 *
 */
+
 
 /*
 *   --- Prompt ---
@@ -72,13 +81,47 @@ const answers = {
   scripts: await select({
     message: 'What Scripting?',
     choices: [
-      { name: 'Javascript', value: 'js' },
-      { name: 'Typescript', value: 'ts' },
+      { 
+        name: 'Javascript', 
+        value: 'js',
+        description: 'Processed by ESBuild'
+      },
+      { 
+        name: 'Typescript', 
+        value: 'ts',
+        description: 'Compiled via TSC script'
+      },
     ],
   }),
+  cdn: await checkbox({
+    message: 'Play with some CDN',
+    choices: [
+      new Separator('--- CSS ---'),
+      {name: 'Chota', value: 'chota'},
+      {name: 'Bonzai', value: 'bonzai'},
+      {name: 'Bootstrap', value: 'bootstrap'},
+      new Separator('--- JS ---'),
+      {name: 'AlpineJS', value: 'alpine'},
+      {name: 'PocketBase', value: 'pocketbase'},
+      {name: 'htmX', value: 'htmx'},
+    ]
+  }),
+  vscode: await select({
+    message: 'Open in VSCode?',
+    choices: [
+      { 
+        name: 'Sure, why not', 
+        value: 'yep',
+        description: 'Will "code ." from root'
+      },
+      { name: 'Nope', 
+        value: 'nope',
+        description: 'I\'ll open it later'
+      },
+    ],
+  }),
+  install: await confirm({message: 'Install packages now ?', default: true})
 };
-
-console.log(answers.author + " is looking for " + answers.styles + " and " + answers.scripts);
 
 /*
 *   --- Creating Folders ---
@@ -140,6 +183,7 @@ fs.writeFile(pgDataStore, pgDataStoreContent, (err) => {
 
 let cssFile = "";
 let jsFile = "";
+let cdn = "";
 let darkSwitch = "";
 
 if (answers.styles == 'scss') {
@@ -181,6 +225,12 @@ if (answers.scripts == 'js') {
   jsFile = '<script src="/main.js"></script>';
 }
 
+
+for (let item in answers.cdn) {
+  cdn += `{{ cdn.pkg('${answers.cdn[item]}') }}\n\t\t`
+}
+
+
 let pgLayoutsBase = project + '/src/layouts/base.njk';
 let pgLayoutsBaseContent = `<!DOCTYPE html>
 <html lang="en">
@@ -198,6 +248,9 @@ let pgLayoutsBaseContent = `<!DOCTYPE html>
     <link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Caveat&display=swap" rel="stylesheet">
     ${cssFile}
     <script src=\"https://unpkg.com/hyperscript.org@0.9.12\"></script>
+
+    {% import 'node_modules/zoumacros/lib/cdn.njk' as cdn; %}
+    ${cdn}
     {% block headStyles %}{% endblock %}
     {% block headScripts %}{% endblock %}
     </head>
@@ -233,7 +286,7 @@ if (answers.styles == 'scss') {
   <main style="text-align:center;">
     <img src="https://zoujs.vercel.app/static/images/z.png" width="50px">
     <h1>Zou!<span>JS</span></h1>
-    <h2 title="Click on me ;)" _="on click call alert('///_Hyperscript is Working!')">${project} project by ${answers.author}</h2>
+    <h2 title="Click on me ;)" _="on click call alert('///_Hyperscript is Working!')">${projectName} project by ${answers.author}</h2>
     <nav style="margin-top:1.5rem;font-family:sans-serif;">
       / {% for link in data.links %} <a href="{{link.url}}">{{link.label}}</a> / {% endfor %} ...
     </nav>
@@ -681,7 +734,7 @@ let twPkg = "";
 
 // --- Styles ---
 
-if (answers.css == "scss") {
+if (answers.styles == "scss") {
 
   scssScript = `"w-sass": "sass  --no-source-map --watch src/styles:public",
     "b-sass": "sass  --no-source-map src/styles:public --style compressed",`;
@@ -760,9 +813,23 @@ fs.writeFile(pkgJson, pkgJsonContent, (err) => {
   // package.json Created!
 });
 
-// End:  zou create myProject
-} else if (args[0] == "newFile") {
 
+if (answers.install) {
+
+  console.log(chalk.bold.magenta('\nLet\'s Go!') + " ..."+ chalk.italic('Zou! steaming, let him cook ;)') )
+  if (answers.vscode == 'yep') {
+    $`cd ${projectName} && code . && npm install && npm run dev`;
+  } else {
+    $`cd ${projectName} && npm install && npm run dev`;
+  } 
+   
+}
+
+// End:  zou create myProject
+} 
+
+// #newFile ---------------------------------------------------------
+else if (args[0] == "make:file") {
 /*
 *
 *  Scaffold a new Page in src/pages
@@ -776,15 +843,10 @@ fs.writeFile(pkgJson, pkgJsonContent, (err) => {
 
 const answersPage = {
   //project: await input({ message: "Project: " }),
-  file: await input({ message: "Name: ", default: "newFile" }),
+  //file: await input({ message: "Name: ", default: "newFile" }),
   type: await select({
     message: 'What Type?',
     choices: [
-      { 
-        name: 'Data', 
-        value: 'data',
-        description: '...strings or arrays for .njk use.', 
-      },
       { 
         name: 'Layout', 
         value: 'layout',
@@ -810,14 +872,85 @@ console.log(`Ok, we\'ll create the ${answersPage.file} ${answersPage.type}`)
 
 if (answersPage.type == "layout") {
 
-// FILE: --- newLayout ---
+  const ansLayout = {
+    //project: await input({ message: "Project: " }),
+    file: await input({ message: "Name: ", default: "newLayout" }),
+  };
 
-let newLayout = `./src/layouts/${answersPage.file}`;
-let newLayoutContent = `<doctype! HTML>`;
-fs.writeFile(newLayout, newLayoutContent, (err) => {
-  if (err) throw err;
-  // tailwind.config.ts Created!
-});
+  // FILE: --- newLayout ---
+  let newLayout = `./src/layouts/${ansLayout.file}.njk`;
+  let newLayoutContent = `<!DOCTYPE html>
+<html lang="en">
+    <head x-data="data">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content="Zou!" />
+    <title>{% block pageTitle %}{% endblock %} {{data.appName}}</title>
+    <meta name="description" content="{% block pageDesc %}{% endblock %}">
+    <link rel="author" href="/humans.txt" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="/main.css" />
+    <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
+    {% block headStyles %}{% endblock %}
+    {% block headScripts %}{% endblock %}
+    </head>
+    <body>
+
+    {% block main %}{% endblock %}
+
+    <script src="/script.js"></script> 
+    </body>
+</html>`;
+  fs.writeFile(newLayout, newLayoutContent, (err) => {
+    if (err) throw err;
+    console.log(chalk.green('Done!'));
+    console.log(`./src/layouts/${ansLayout.file}.njk`+ chalk.italic(' created'))
+  });
+
+} else if (answersPage.type == "page") {
+
+  // --- Prompt for information ---
+  // Title  = ansPage.title
+  // URL    = ansPage.url
+  // Layout = ansPage.layout
+  const ansPage = {
+    title: await input({ message: "Title: ", default: "New page" }),
+    url: await input({ message: "URL: ", default: "new-page" }),
+    layout: await input({ message: "Layout: ", default: "base" }),
+  };
+
+    // FILE: --- newLayout ---
+    let newPage = `./src/pages/${ansPage.url}/index.njk`;
+    let newPageContent = `{% extends "src/layouts/${ansPage.layout}.njk" %}
+{% block pageTitle %} ${ansPage.title} {% endblock %}
+{% block pageDesc %}{% endblock %}
+
+{% block main %}
+    <h1>${ansPage.title}</h1>
+{% endblock %}`;
+    fs.mkdirSync(`./src/pages/${ansPage.url}`);
+    fs.writeFile(newPage, newPageContent, (err) => {
+      if (err) throw err;
+      console.log(chalk.green('Done!'));
+      console.log(`./src/pages/${ansPage.url}/index.njk`+ chalk.italic(' created'))
+    });
+
+} else if (answersPage.type == "partial") {
+
+  // --- Prompt for information ---
+  // File  = ansPartial.file
+  const ansPartial = {
+    file: await input({ message: "File: ", default: "some-partial" }),
+  };
+
+  // FILE: --- newPartial ---
+  let newPartial = `./src/partials/${ansPartial.file}.njk`;
+  let newPartialContent = `{# ${newPartial} #}`;
+  fs.writeFile(newPartial, newPartialContent, (err) => {
+    if (err) throw err;
+    console.log(chalk.green('Done!'));
+    console.log(`./src/partials/${ansPartial.file}.njk`+ chalk.italic(' created'))
+  });
 
 }
 
