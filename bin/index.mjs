@@ -792,7 +792,7 @@ let pkgJsonContent = `{
     "build": "npm-run-all --parallel b-*",
     "serve": "alive-server public",
     "dev": "npm-run-all copy b-pages --parallel watch serve",
-    "postbuild": "postcss public/css/*.css -u autoprefixer cssnano -r --no-map"
+    "postbuild": "postcss public/*.css -u autoprefixer cssnano -r --no-map"
   },
   "dependencies": {},
   "devDependencies": {
@@ -957,8 +957,53 @@ if (answersPage.type == "layout") {
 
 }
 
+}
 
+// #deployVercel ---------------------------------------------------------
+else if (args[0] == "deploy:vercel") {
+/*
+*
+*  Trigger the Vercel deploy from dist/
+*
+*/
+await $`npm run build && cd public && vercel deploy --prod`
+}
 
+// #deployNetlify ---------------------------------------------------------
+else if (args[0] == "deploy:netlify") {
+/*
+*
+*  Trigger the Netlify deploy from dist/
+*
+*/
+await $`npm run build && cd public && netlify deploy --prod`
+}
 
+// #gitSave ---------------------------------------------------------
+else if (args[0] == "git:save") {
+/*
+*
+*  Commit all changes and push to Origin
+*
+*/
+const d = new Date();
+let day = d.getDate();
+let month = d.getMonth() + 1;
+let hours = d.getHours();
+let minutes = d.getMinutes();
 
+let commitMessage = `Update from ${month}/${day} at ${hours}:${minutes}`;
+
+const answersGit = {
+  message: await input({ 
+    message: "Commit Message: ",
+    default: commitMessage 
+  }),
+  branch: await input({ 
+    message: "Branch: ", 
+    default: "master" 
+  }),
+};
+
+await $`git add . && git commit -m "${commitMessage}" && git push origin ${answersGit.branch} `
 }

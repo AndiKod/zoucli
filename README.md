@@ -1,6 +1,6 @@
 # Zou! CLI
 
-Scaffold a custom Zou! SSG Boilerplate or and more with interactive prompt.
+Scaffold a custom Zou! SSG Boilerplate and more with interactive prompt (pages, git, deploy, ...).
 
 *— Zou! is a french interjection that stands for: JustDoIt! GoAhead!*
 
@@ -92,3 +92,59 @@ The prompt will ask:
   <summary>Partial</summary>
   <p>Will ask for the file name to  be created. Say you answer 'footer', it will create the `src/partials/footer.njk` file, that you could then include where needed with {% include 'src/partials/footer.njk' %}.</p>
 </details>
+
+## Save to Git
+
+From the project's root folder:
+
+```
+npx zou git:save
+```
+
+It will prompt for a `Commit message` or generate one as `Update from month/day at h:m`, ask for the branch name and defaulting to `master`.
+
+It will basically do *(in one go)* the equivalent of:
+
+```
+git add .
+git commit -m "commitMessage"
+git push origin branch
+```
+
+The basic "take everything and throw it on master", that's why it's called by a generic *git:save* like a Ctr/Cmd+S. Other git:commands might come later.
+
+## Manual Deploy to Vercel
+
+From the project's root folder:
+
+```
+npx zou deploy:vercel
+```
+
+It will build the project, move into `/public` and call `vercel deploy --prod`. The first time it will setup the distant project or link to an existant, and the next ones will just upload the website.
+
+If you have "strange characters" in the terminal, just do the first deploy directly by `cd public && vercel deploy --prod`. From here, the deploy:vercel from the root will roll. *Nothing is "borken" just Bash commands running from Node via zh wraper*.
+
+
+## Manual Deploy to Netlify
+
+Be sure to have Netlify CLI installed: `npm install netlify-cli -g`. 
+
+```
+npx zou deploy:netlify
+```
+
+It will build the project, move into `/public` and call `netlify deploy --prod` for a [Manual Deploy](https://docs.netlify.com/cli/get-started/#manual-deploys). 
+
+One approach is to [drop here](https://app.netlify.com/drop) the `public/` folder after running `npm run build` the first time, and change the name on Netlify to match with your project. > Go inside the public/ folder, call `netlify link` and link them.
+
+Next times from the root of your local project `npx zou deploy:netlify` will be enough, build & deploy simple command. To save your code ...*zou git:save*
+
+
+---
+
+## Changelog
+
+**1.1.0**<br>
+Added the `deploy:vercel`, `deploy:netlify`, `git:save` commands and fixed the postbuild script.
+

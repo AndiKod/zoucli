@@ -1,6 +1,6 @@
 {
   "name": "zoucli",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Scaffold a custom Zou! SSG Boilerplate with interactive prompt",
   "main": "bin/index.mjs",
   "bin": {
