@@ -16,7 +16,17 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": [
+    "Zou",
+    "CLI",
+    "SSG",
+    "Nunjucks",
+    "SCSS",
+    "OpenProps",
+    "Hyperscript",
+    "TailwindCSS",
+    "TypeScript"
+  ],
   "author": "Andrei Curelaru",
   "license": "ISC",
   "dependencies": {
