@@ -148,3 +148,5 @@ Next times from the root of your local project `npx zou deploy:netlify` will be 
 **1.1.0**<br>
 Added the `deploy:vercel`, `deploy:netlify`, `git:save` commands and fixed the postbuild script.
 
+**1.1.1**<br>
+Fixed some misspelled filenames causing troubles with Tailwind & Typescript. It's fine now.

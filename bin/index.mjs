@@ -181,6 +181,7 @@ fs.writeFile(pgDataStore, pgDataStoreContent, (err) => {
 *   --- LAYOUTS ---
 */
 
+// #layout
 // --- FILE: src/layouts/base.njk ---
 
 let cssFile = "";
@@ -218,7 +219,7 @@ if (answers.styles == 'scss') {
     </script>
     `;
 } else if (answers.styles == 'tailwind') {
-  cssFile = '<link rel="stylesheet" href="/maintw.css" />';
+  cssFile = '<link rel="stylesheet" href="/tw.css" />';
 }
 
 if (answers.scripts == 'js') {
@@ -236,7 +237,7 @@ for (let item in answers.cdn) {
 let pgLayoutsBase = project + '/src/layouts/base.njk';
 let pgLayoutsBaseContent = `<!DOCTYPE html>
 <html lang="en">
-    <head x-data="data">
+    <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content="Zou!" />
@@ -256,6 +257,7 @@ let pgLayoutsBaseContent = `<!DOCTYPE html>
     
     {% block headStyles %}{% endblock %}
     {% block headScripts %}{% endblock %}
+    <!-- https://blog.hubspot.com/marketing/meta-tags -->
     </head>
     <body>
 
@@ -340,7 +342,7 @@ if (answers.styles == 'scss') {
 
   indexPage = `
   <main style="text-align:center;">
-    <img src="https://zoujs.vercel.app/static/images/z.png" width="50px">
+    <img src="https://zoujs.vercel.app/static/images/z.png" width="50px" class="mx-auto mt-8">
     <h1>Zou!<span>JS</span></h1>
     <h2 title="Click on me ;)" _="on click call alert('///_Hyperscript is Working!')">${projectName} project by ${answers.author}</h2>
     <nav style="margin-top:1.5rem;font-family:sans-serif;">
@@ -351,7 +353,8 @@ if (answers.styles == 'scss') {
   <!-- Minimal styles -->
   <style>
     body {
-      background: var(--bg);
+      color: ivory;
+      background: linear-gradient(-45deg, #d84d23, #e2af22, #86c232);
       background-size: 400% 400%;
       animation: gradient 5s ease infinite;
       height: 100vh;
@@ -435,7 +438,8 @@ if (answers.scripts == 'js') {
 
   // FILE: --- tsconfig.js ---
 
-  let tsConfig = project + '/tsconfig.js';
+  // #tsconfig
+  let tsConfig = project + '/tsconfig.json';
   let tsConfigContent = `{
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
