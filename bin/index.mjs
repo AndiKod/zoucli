@@ -133,6 +133,7 @@ let projectName = args[1];
 const project = `./${projectName}`;
 
 fs.mkdirSync(`./${project}`);
+fs.mkdirSync(project + '/bin');
 fs.mkdirSync(project + '/src');
 fs.mkdirSync(project + '/src/data');
 fs.mkdirSync(project + '/src/layouts');
@@ -148,20 +149,78 @@ fs.mkdirSync(project + '/src/styles');
 */
 
 
+/*
+*   --- BIN ---
+*/
+
+// FILE: --- bin/db.js ---
+
+let pgBinDb = project + '/bin/db.js';
+let pgBinDbContent = `// bin/db.js
+
+const dirTree = require("directory-tree");
+const fs = require('fs');
+const fm = require('html-frontmatter');
+
+const files = [];
+
+dirTree('./public', {extensions:/\.html$/}, (item, PATH, stats) => {
+  let path = __dirname +'../../'+ PATH;
+  let content = fm(fs.readFileSync(path, 'utf-8'));
+  files.push(content);
+});
+
+const filesJson = JSON.stringify(files, null, 2);
+const content = 'module.exports.pages = ' + filesJson;
+
+//fs.rm('./src/data/db.js');
+fs.writeFile('./src/data/db.js', content, (err) => {
+  if(err) { 
+    console.log(err); 
+  } else {
+    console.log('Done!');
+  }
+})`;
+fs.writeFile(pgBinDb, pgBinDbContent, (err) => {
+  if (err) { console.error(err); }
+  // bin/db.js Created!
+});
+
+
 
 /*
 *   --- DATA ---
 */
 
+// FILE: --- src/data/nav.js ---
+
+let pgDataNav = project + '/src/data/nav.js';
+let pgDataNavContent = `// src/data/nav.js
+
+module.exports.navMain = [
+  {
+    url: "/",
+    label: "Home",
+  },
+  {
+    url: "/blog",
+    label: "Blog",
+  },
+];`;
+fs.writeFile(pgDataNav, pgDataNavContent, (err) => {
+  if (err) { console.error(err); }
+  // src/data/nav.js Created!
+});
+
 // FILE: --- src/data/store.js ---
 
 let pgDataStore = project + '/src/data/store.js';
-let pgDataStoreContent = `// src/data/store.js
+let pgDataStoreContent = `// src/data/nav.js
 
 module.exports.links = [
   {
-    url: "https://github.com/AndiKod/zou",
-    label: "Zou!JS Github",
+    url: "https://github.com/AndiKod/zoucli",
+    label: "Zou!CLI Github",
   },
   {
     url: "hhttps://mozilla.github.io/nunjucks/templating.html",
@@ -176,6 +235,9 @@ fs.writeFile(pgDataStore, pgDataStoreContent, (err) => {
   if (err) { console.error(err); }
   // src/data/store.js Created!
 });
+
+
+
 
 /*
 *   --- LAYOUTS ---
@@ -235,7 +297,10 @@ for (let item in answers.cdn) {
 
 
 let pgLayoutsBase = project + '/src/layouts/base.njk';
-let pgLayoutsBaseContent = `<!DOCTYPE html>
+let pgLayoutsBaseContent = `<!--
+{%block  frontMatter %}{% endblock %}  
+-->
+<!DOCTYPE html>
 <html lang="en">
     <head>
     <meta charset="UTF-8" />
@@ -285,11 +350,13 @@ let indexPage = "";
 if (answers.styles == 'scss') {
 
   indexPage = `
-  <figure onclick="toggleTheme()">
+  <figure onclick="toggleTheme()" style="padding-top:2rem;">
     <img src="https://icongr.am/feather/sun.svg?size=24&color=var(--text)">
   </figure>
-  <main style="text-align:center;">
-    <img src="https://zoujs.vercel.app/static/images/z.png" width="50px">
+  <main style="display:grid;justify-content: center;text-align:center;margin-top:3rem;">
+    <figure>
+      <img src="https://zoujs.vercel.app/static/images/z.png" width="50px">
+    </figure>
     <h1>Zou!<span>JS</span></h1>
     <h2 title="Click on me ;)" _="on click call alert('///_Hyperscript is Working!')">${projectName} project by ${answers.author}</h2>
     <nav style="margin-top:1.5rem;font-family:sans-serif;">
@@ -341,7 +408,7 @@ if (answers.styles == 'scss') {
 } else if (answers.styles == 'tailwind') {
 
   indexPage = `
-  <main style="text-align:center;">
+  <main style="display:grid;justify-content: center;text-align:center;margin-top:3rem;">
     <img src="https://zoujs.vercel.app/static/images/z.png" width="50px" class="mx-auto mt-8">
     <h1>Zou!<span>JS</span></h1>
     <h2 title="Click on me ;)" _="on click call alert('///_Hyperscript is Working!')">${projectName} project by ${answers.author}</h2>
@@ -396,6 +463,15 @@ if (answers.styles == 'scss') {
 
 let pgPagesIndex = project + '/src/pages/index.njk';
 let pgPagesIndexContent = `{% extends "src/layouts/base.njk" %}
+
+// Data that goes into data/db.js pages object
+// It enables collections and more via zou.config.js filters
+{% block frontMatter %}
+title: Homepage
+url: /
+type: page
+{% endblock %}
+
 {% block pageTitle %} 👋 {% endblock %}
 {% block pageDesc %}My Zou! project{% endblock %}
 
@@ -600,6 +676,8 @@ if (answers.styles == 'tailwind') {
 */
 
 @import "https://unpkg.com/open-props";
+@import "https://unpkg.com/open-props/normalize.min.css";
+@import "https://unpkg.com/open-props/buttons.min.css";
 
 body {
   color: var(--text-1);
@@ -645,8 +723,14 @@ body.light {
 let zouConfig = project + '/zou.config.js';
 let zouConfigContent = `// zou.config.js
 
+// Get Lodash in
+const _ = require('lodash');
+
 /* Import Data file*/
 const store = require("./src/data/store.js");        
+const db = require('./src/data/db.js');       
+const nav = require('./src/data/nav.js');
+const tags = _.uniqBy( _.flatMap(db.pages, 'tags') );
 
 /* Data to use from .njk files */
 /* <h2>{{data.appName}}</h2> */
@@ -654,7 +738,10 @@ const store = require("./src/data/store.js");
 
 const data = {
   appName: '${projectName}',
-  links: store.links
+  links: store.links,
+  pages: db.pages,
+  navMain: nav.navMain,
+  tags: tags,
 };
 
 
@@ -676,6 +763,65 @@ module.exports = {
 
       nunjucksEnv.addFilter('shorten', function(str, count) {
           return str.trim().slice(0, count || 5);
+      });
+
+      // Get data of a particular Tag (from frontmatter)
+      // {% for posts data.pages | withTag('racoon') %}
+      nunjucksEnv.addFilter('withTag', function(input, tag){
+
+        function byTag(input) {
+          return input.tags.includes(tag);
+        }
+
+        return input.filter(byTag);
+      });
+
+      // Collections. Get pages with urls including a pattern
+      // {% for posts data.pages | urlInc('/blog/') %}
+      nunjucksEnv.addFilter('urlInc', function(input, url){
+
+        function byUrl(input) {
+          return input.url.includes(url);
+        }
+
+        return input.filter(byUrl);
+      });
+
+      // Frontmatter data of the curent page
+      // {% for posts data.pages | urlIs('/blog/article-one') %}
+      nunjucksEnv.addFilter('urlIs', function(input, url){
+
+        function byUrl(input) {
+          return input.url === url;
+        }
+
+        return input.filter(byUrl);
+      });
+
+      // Limt the amount of results from/to. 3 most recent posts:
+      // {% for posts in data.pages | reverse | urlInc('/blog/') | limitFormTo(0, 3) %}
+      // The selection function works on numbers and strings too.
+      nunjucksEnv.addFilter('limitFromTo', function(input, from, limit) {
+        'use strict';
+        if(typeof limit !== 'number'){
+          return input;
+        }
+        if(typeof input === 'string'){
+          if(limit >= 0){
+            return input.substring(from, limit);
+          } else {
+            return input.substr(limit);
+          }
+        }
+        if(Array.isArray(input)){
+          limit = Math.min(limit, input.length);
+          if(limit >= 0){
+            return input.splice(from, limit);
+          } else {
+            return input.splice(input.length + limit, input.length);
+          }
+        }
+        return input;
       });
 
     },
@@ -792,10 +938,11 @@ let pkgJsonContent = `{
     "c-root": "copyfiles -u 1 \\"./src/favicon.ico\\" \\"./src/*.txt\\"   \\"public\\"",
     "copy": "npm-run-all --parallel c-*",
     "w-pages": "onchange \\"./src/**/*\\" -- npm run b-pages",
+    "bin": "node bin/db",
     "watch": "npm-run-all --parallel w-*",
-    "build": "npm-run-all --parallel b-*",
+    "build": "npm-run-all bin --parallel b-*",
     "serve": "alive-server public",
-    "dev": "npm-run-all copy b-pages --parallel watch serve",
+    "dev": "npm-run-all bin copy b-pages --parallel watch serve",
     "postbuild": "postcss public/*.css -u autoprefixer cssnano -r --no-map"
   },
   "dependencies": {},
@@ -805,6 +952,9 @@ let pkgJsonContent = `{
     "nunjucks-to-html": "^1.1.0",
     "onchange": "^7.1.0",
     "copyfiles": "^2.4.1",
+    "directory-tree": "^3.5.1",
+    "html-frontmatter": "^1.6.1",
+    "lodash": "^4.17.21",
     "npm-run-all": "^4.1.5",
     "alive-server": "^1.3.0",
     "postcss": "^8.4.31",
@@ -853,12 +1003,7 @@ const answersPage = {
   //file: await input({ message: "Name: ", default: "newFile" }),
   type: await select({
     message: 'What Type?',
-    choices: [
-      { 
-        name: 'Layout', 
-        value: 'layout',
-        description: '...the HTML around the page\'s content. ',
-      },
+    choices: [ 
       { 
         name: 'Page', 
         value: 'page',
@@ -868,6 +1013,11 @@ const answersPage = {
         name: 'Partial', 
         value: 'partial',
         description: '... .njk fragment to include elsewhere',
+      },
+      { 
+        name: 'Layout', 
+        value: 'layout',
+        description: '...the HTML around the page\'s content. ',
       },
     ],
   }),
@@ -886,7 +1036,10 @@ if (answersPage.type == "layout") {
 
   // FILE: --- newLayout ---
   let newLayout = `./src/layouts/${ansLayout.file}.njk`;
-  let newLayoutContent = `<!DOCTYPE html>
+  let newLayoutContent = `<!--
+{%block  frontMatter %}{% endblock %}   
+-->
+<!DOCTYPE html>
 <html lang="en">
     <head x-data="data">
     <meta charset="UTF-8" />
@@ -922,24 +1075,36 @@ if (answersPage.type == "layout") {
   // Layout = ansPage.layout
   const ansPage = {
     title: await input({ message: "Title: ", default: "New page" }),
-    url: await input({ message: "URL: ", default: "new-page" }),
+    url: await input({ message: "URL: ", default: "/new-page" }),
     layout: await input({ message: "Layout: ", default: "base" }),
   };
 
-    // FILE: --- newLayout ---
-    let newPage = `./src/pages/${ansPage.url}/index.njk`;
+    // FILE: --- newPage ---
+
+    let newPage = `./src/pages${ansPage.url}/index.njk`;
     let newPageContent = `{% extends "src/layouts/${ansPage.layout}.njk" %}
+
+{% block frontMatter %}
+title: ${ansPage.title}
+url: ${ansPage.url}
+tags: []
+{% endblock %}    
+
 {% block pageTitle %} ${ansPage.title} {% endblock %}
 {% block pageDesc %}{% endblock %}
 
 {% block main %}
-    <h1>${ansPage.title}</h1>
+{% for page in data.pages | urlIs('${ansPage.url}') %}
+
+  <h1>{{page.title}}</h1>
+
+{% endfor %}  
 {% endblock %}`;
-    fs.mkdirSync(`./src/pages/${ansPage.url}`);
+    fs.mkdirSync(`./src/pages${ansPage.url}`, { recursive: true });
     fs.writeFile(newPage, newPageContent, (err) => {
       if (err) throw err;
       console.log(chalk.green('Done!'));
-      console.log(`./src/pages/${ansPage.url}/index.njk`+ chalk.italic(' created'))
+      console.log(`./src/pages${ansPage.url}/index.njk`+ chalk.italic(' created'))
     });
 
 } else if (answersPage.type == "partial") {

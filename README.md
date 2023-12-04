@@ -1,27 +1,28 @@
-# Zou! CLI
+# Zou! CLI - SSG
 
-Scaffold a custom Zou! SSG Boilerplate and more with interactive prompt (pages, git, deploy, ...).
+Scaffold a custom Zou! SSG project and more, with interactive prompt (pages, partials, layouts, git, deploy, ...).
 
 *— Zou! is a french interjection that stands for: JustDoIt! GoAhead!*
 
 Simple SSG setup, with close to zero configuration or dependencies but flexible enough to craft web projects or fire a quick sandbox and try things from a curated list of CDN's, Macros & Mixins.
 
 
+Everything is "watched/live served" then optimized for production in the `/public` folder, ready to go on Vercel, Netlify or a good'ol FTP. No JS framework, no mega-bundler, almost nothing new to learn beyond HTML, CSS, JS yet it does the job "out of the box". #HaveFun
+
+
 | -Folder- | -Purpose-    |
 | --- | --- |
+| **Bin:** | db.js will scan files and create an object from the Frontmatters |
 | **Data:** | Add data in .js / load in zou.config.js / use in .njk templates |
 | **Layouts:** | General .njk templates, composed with partials and more |
 | **Macros:** | Styled components, functionalities, (many possibilities) |
 | **Pages:** | Extending a layout. The main element with dynamic content |
 | **Partials:** | Sub-pages to be included in others |
-| **Scripts:** | Assets to be copied to public, generally images |
+| **Scripts:** | The enty points for the .js or .ts files |
+| **Static:** | Assets to be copied to public, generally images |
 | **Styles:** | SCSS / Tailwind. Whatever flavor you like |
 
-Everything is "watched and live served" then on `npm run build` the production html/css/js will be in the `public` folder, ready to go on Vercel or Netlify optimized. No JS framework, no mega-bundler, almost nothing new to learn yet it does the job "out of the box". #HaveFun
 
-Related Docs: [Nunjucks](https://mozilla.github.io/nunjucks/templating.html), [Openprops](https://open-props.style/#getting-started), [Hyperscript](https://hyperscript.org/docs/#basics), [SCSS](https://sass-lang.com/documentation/variables/), [zouMixins](https://github.com/AndiKod/zouMixins), [Tailwind](https://tailwindcss.com/docs/installation), [Typescript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html). 
-
-Via [zouMacros](https://github.com/AndiKod/zouMacros): [AlpineJS](https://alpinejs.dev/start-here), [htmX](https://htmx.org/), [Pocketbase](https://pocketbase.io/docs/), [ChotaCSS](https://jenil.github.io/chota/#docs), [BonsaiCSS](https://www.bonsaicss.com/), [Bulma](https://bulma.io/documentation/), [Bootstrap](https://getbootstrap.com/docs/5.3/getting-started/introduction/) Comming soon: [Supabase](https://supabase.com/docs/guides/database/overview), [Planetscale](https://planetscale.com/docs).
 
 ## Scaffold a new Zou! project
 
@@ -31,7 +32,15 @@ From a terminal, just call:
 npx zou create myWebsite
 ```
 
-The prompt will ask:
+or first go 
+
+```
+npm install -g zoucli
+```
+
+*this would install Zou! globally or update it to the newest version, and eventually you coud strip the `npx` part from the calls.*
+
+### The prompt will ask:
 
 <details>
   <summary>Author:</summary>
@@ -63,12 +72,148 @@ The prompt will ask:
   <p>This Y/n prompt—if Y—will make Zou! move into `myWebsite` where all the files & folders were generated, open the folder in VSCode, launch an `npm install` then fire the dev server with `npm run dev` automatically when ready. Sit back & enjoy.</p>
 </details>
 
+## Pages database file auto-generated from frontmatter
+
+On `npm run dev`, `npm run build` or directly from the root with `node bin/db`, Zou! will scan the /public folder for .html pages, and transform the HTML-frontmatter into the 'pages' object, stored and exporterd from /src/data/db.js
+
+- Each frontmatter object expecting at least 'title' and 'url' (here the date is a timestamp for now) [https://timestamp.online/](https://timestamp.online/)
+
+  ```
+  <!-- src/pages/blog/article-one/index.njk -->
+  {% block frontMatter %}
+  title: Article One
+  url: /blog/article-one
+  date: 1701621848
+  tags: [one, two, racoon]
+  {% endblock %}
+  ```
+  
+- becomes an entry in the pages object
+
+    ```
+  // src/data/db.js
+  module.exports.pages = [
+    {
+      "title": "Article One",
+      "url": "/blog/article-one",
+      "date": 1701621848,
+      "tags": [
+        "one",
+        "two",
+        "racoon"
+      ]
+    }
+  ]
+  ```
+
+- then is injected into the 'data' object for .njk files
+  
+    ```
+  // zou.config.js
+  
+  /* Import Data file*/       
+  const db = require('./src/data/db.js');
+  
+  /* Create the data object */
+  const data = {
+    appName: 'myWebsite',
+    pages: db.pages,
+  };     
+  ```
+
+## Collections and more via custom Nunjucks filters
+
+<details>
+  <summary><strong>urlInc('blog/') : </strong>  Collection of any page where the 'url' field includes a pattern</summary>
+  <p>Usage: <code>{% for post in data.pages | urlInc('blog/') %}...</code> Then inside we have access to {{ post.title }}, {{ post.url }}... We  can nest the related tags if they exists, with something like <code>{% for tags in post.tags %}...</code> from inide the first loop. It can be virtually anything, as long as it can find some matching results.</p>
+</details>
+
+<details>
+  <summary><strong>urlIs('/blog/article-one') : </strong>  Extracting the frontmatter data of a signle page</summary>
+  <p>Usage: <code>{% for page in data.pages | urlIs('/') %}...</code> It can wrap everyting inside the {% block main %} and give acces to things like related categories/tags, or whatever else usefull from the frontmatter. A classic example would be blog posts pages files.</p>
+</details>
+
+<details>
+  <summary><strong>limitFromTo(0, 5) : </strong>  Limitintg the results we recieve from *data.pages*</summary>
+  <p>Usage: <code>{% for page in data.pages | limitFromTo(0, 5) %}...</code> will produce an array with the first 5 elements. To offset the list, obviously go for a grater than zero starting point</p>
+</details>
+
+<details>
+  <summary><strong>reverse : </strong>  Builtin Nunjuck handy filter</summary>
+  <p>Usage: <code>{% for pages in data.pages | reverse %}...</code> just that. The array, in reverse, newest first.</p>
+</details>
+
+<details>
+  <summary><strong>SuperCombo : </strong>  The 5 most recent posts :)</summary>
+  <p>Usage: <code>{% for posts in data.pages | reverse | urlInc('blog/') | limitFromTo(0, 5) %}...</code> Easy.</p>
+</details>
+
+<details>
+  <summary><strong>tags : </strong>  A pre-filtered list of uniques tags</summary>
+  <p>Usage: <code>{% for tag in tags %}<a href="/posts-about/{{ tag }}">{{ tag }}</a>{% endfor %}</code> It exctracts uniques occurences from the `tags: [one, two, racoon]` lines in the frontmatters.</p>
+</details>
+
+<details>
+  <summary><strong>withTag('racoon') : </strong>  Collection of all pges having a word in their `tags`</summary>
+  <p>Usage: <code>{% for post in data.tags | withTag('racoon') %}...</code> This can create the lists of posts on pages like `/posts-about/racoon` so a visitor could see when clicking on a tag link.</p>
+</details>
+
+## Navigation
+
+Navigations lists of links are stored in `src/data/nav.js` like the navMain block:
+
+```
+// src/data/nav.js
+module.exports.navMain = [
+  {
+    url: "/",
+    label: "Home",
+  },
+  {
+    url: "/blog",
+    label: "Blog",
+  },
+];
+```
+
+Then made available to the temlates in `zou.config.js` 
+
+```
+// zou.config.js
+
+/* Import Data file*/       
+const nav = require('./src/data/nav.js');
+
+/* Add to the data object */
+const data = {
+  appName: 'myWebsite',
+  navMain: nav.navMain,
+};     
+```
+
+That way, in any template or partial like a header, we can just:
+
+```
+// someFile.njk
+
+<ul>
+{% for link in navMain %}
+  <li><a href="{{ link.url }}">{{ link.label }}</a></li>
+{% endfor %}
+</ul>
+};     
+```
+
+We can duplicate the block in `src/data/nav.js` and repeat the rest of the steps, to create things like `navFooter`, `navSocials` or whatever other list.
+
+
+
 ## Scaffold a new Page
 
 From a terminal, just call:
 
 ```
-npx zou make:file
+zou make:file
 ```
 
 The prompt will ask:
@@ -98,7 +243,7 @@ The prompt will ask:
 From the project's root folder:
 
 ```
-npx zou git:save
+zou git:save
 ```
 
 It will prompt for a `Commit message` or generate one as `Update from month/day at h:m`, ask for the branch name and defaulting to `master`.
@@ -118,7 +263,7 @@ The basic "take everything and throw it on master", that's why it's called by a 
 From the project's root folder:
 
 ```
-npx zou deploy:vercel
+zou deploy:vercel
 ```
 
 It will build the project, move into `/public` and call `vercel deploy --prod`. The first time it will setup the distant project or link to an existant, and the next ones will just upload the website.
@@ -131,7 +276,7 @@ If you have "strange characters" in the terminal, just do the first deploy direc
 Be sure to have Netlify CLI installed: `npm install netlify-cli -g`. 
 
 ```
-npx zou deploy:netlify
+zou deploy:netlify
 ```
 
 It will build the project, move into `/public` and call `netlify deploy --prod` for a [Manual Deploy](https://docs.netlify.com/cli/get-started/#manual-deploys). 
@@ -143,6 +288,13 @@ Next times from the root of your local project `npx zou deploy:netlify` will be 
 
 ---
 
+
+Related Docs, *just in case*: [Nunjucks](https://mozilla.github.io/nunjucks/templating.html), [Openprops](https://open-props.style/#getting-started), [Hyperscript](https://hyperscript.org/docs/#basics), [SCSS](https://sass-lang.com/documentation/variables/), [zouMixins](https://github.com/AndiKod/zouMixins), [Tailwind](https://tailwindcss.com/docs/installation), [Typescript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html). 
+
+Via [zouMacros](https://github.com/AndiKod/zouMacros): [AlpineJS](https://alpinejs.dev/start-here), [htmX](https://htmx.org/), [Pocketbase](https://pocketbase.io/docs/), [ChotaCSS](https://jenil.github.io/chota/#docs), [BonsaiCSS](https://www.bonsaicss.com/), [Bulma](https://bulma.io/documentation/), [Bootstrap](https://getbootstrap.com/docs/5.3/getting-started/introduction/) Comming soon: [Supabase](https://supabase.com/docs/guides/database/overview), [Planetscale](https://planetscale.com/docs).
+
+
+
 ## Changelog
 
 **1.1.0**<br>
@@ -150,3 +302,10 @@ Added the `deploy:vercel`, `deploy:netlify`, `git:save` commands and fixed the p
 
 **1.1.1**<br>
 Fixed some misspelled filenames causing troubles with Tailwind & Typescript. It's fine now.
+
+**1.2.0**<br>
+- Added FrontMatter support to the pages in the templates
+- Automatic 'database' object with the data from the frontmatter
+- Collections, Tags, limitFromTo(), withTag('something'), ... Nunjucks filters
+- Navigation objects generating navMain, navFooter,...
+- and maybe other things I can't remenber
