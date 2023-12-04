@@ -155,7 +155,7 @@ On `npm run dev`, `npm run build` or directly from the root with `node bin/db`, 
 
 <details>
   <summary><strong>withTag('racoon') : </strong>  Collection of all pges having a word in their `tags`</summary>
-  <p>Usage: <code>{% for post in data.tags | withTag('racoon') %}...</code> This can create the lists of posts on pages like `/posts-about/racoon` so a visitor could see when clicking on a tag link.</p>
+  <p>Usage: <code>{% for posts in data.pages | withTag('racoon') %}...</code> This can create the lists of posts on pages like `/posts-about/racoon` so a visitor could see when clicking on a tag link.</p>
 </details>
 
 ## Navigation
