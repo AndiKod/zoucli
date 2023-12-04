@@ -1,6 +1,6 @@
 # Zou! CLI - SSG
 
-Scaffold a custom Zou! SSG project and more, with interactive prompt (pages, partials, layouts, git, deploy, ...).
+Scaffold a custom Zou! SSG project and more, with interactive prompt (pages, git, deploy, ...)
 
 *— Zou! is a french interjection that stands for: JustDoIt! GoAhead!*
 
