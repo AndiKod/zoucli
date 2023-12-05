@@ -1174,5 +1174,7 @@ const answersGit = {
   }),
 };
 
-await $`git add . && git commit -m "${commitMessage}" && git push origin ${answersGit.branch} `
+
+
+await $`git add . && git commit -m "${answersGit.message}" && git push origin ${answersGit.branch} `
 }

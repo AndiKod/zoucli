@@ -309,3 +309,6 @@ Fixed some misspelled filenames causing troubles with Tailwind & Typescript. It'
 - Collections, Tags, limitFromTo(), withTag('something'), ... Nunjucks filters
 - Navigation objects generating navMain, navFooter,...
 - and maybe other things I can't remenber
+
+**1.2.2**<br>
+- Fixed the commit message from the `zou git:save` command. It displayed the default message instead of the custom one, it's now back to normal.
