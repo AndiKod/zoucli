@@ -2,45 +2,62 @@
 
 Scaffold a custom Zou! SSG project and more, with interactive prompt (pages, git, deploy, ...)
 
-*— Zou! is a french interjection that stands for: JustDoIt! GoAhead!*
+*— Prononced like 'zoo' or 'zu' in italian/romanian,... Zou! is a french interjection that stands for: JustDoIt! GoAhead! Let'sGo!*
 
-Simple SSG setup, with close to zero configuration or dependencies but flexible enough to craft web projects or fire a quick sandbox and try things from a curated list of CDN's, Macros & Mixins.
-
-
-Everything is "watched/live served" then optimized for production in the `/public` folder, ready to go on Vercel, Netlify or a good'ol FTP. No JS framework, no mega-bundler, almost nothing new to learn beyond HTML, CSS, JS yet it does the job "out of the box". #HaveFun
+Simple SSG with close to zero configuration going back to the basics. No JS framework, no mega-bundler, almost nothing new to learn beyond HTML, CSS, JS yet it does the job "out of the box". #HaveFun
 
 
 | -Folder- | -Purpose-    |
 | --- | --- |
 | **Bin:** | db.js will scan files and create an object from the Frontmatters |
-| **Data:** | Add data in .js / load in zou.config.js / use in .njk templates |
-| **Layouts:** | General .njk templates, composed with partials and more |
-| **Macros:** | Styled components, functionalities, (many possibilities) |
-| **Pages:** | Extending a layout. The main element with dynamic content |
-| **Partials:** | Sub-pages to be included in others |
-| **Scripts:** | The enty points for the .js or .ts files |
-| **Static:** | Assets to be copied to public, generally images |
-| **Styles:** | SCSS / Tailwind. Whatever flavor you like |
+| **Docs:** | *-if enabled-* JS and SCSS docs websites will generate here. |
+| **src/Data:** | Add data in .js / load in zou.config.js / use in .njk templates |
+| **src/Layouts:** | General .njk templates, composed with partials and more |
+| **src/Macros:** | Styled components, functionalities, (many possibilities) |
+| **src/Pages:** | Extending a layout. The main element with dynamic content |
+| **src/Partials:** | Sub-pages to be included in others |
+| **src/Scripts:** | The enty points for the .js or .ts files |
+| **src/Static:** | Assets to be copied to public, generally images |
+| **src/Styles:** | SCSS (w/ subfolders partials) / Tailwind. Whatever flavor you like |
+| **Tests** | *-if enabled-* A default folder for *thing.test.js* files, but it's up to you |
 
 
 
-## Scaffold a new Zou! project
+## Scaffold a new Zou! project, the "one liner way"
 
-From a terminal, just call:
-
-```
-npx zou create myWebsite
-```
-
-or first go 
+From v1.4.0, simulating "yes" answers to the propmt, a new SCSS+Javascript project will be instantly created. The optional flag -vsc will open the folder in VSCode, so you could finish from there with your favorite package manager. Just `pnpm/yarn/npm i` then `run dev`. 
 
 ```
-npm install -g zoucli
+npx zou create myWebsite -y -vsc
+
+// or first: npm i -g zoucli ...then:
+zou create myWebsite -y -vsc
 ```
 
-*this would install Zou! globally or update it to the newest version, and eventually you coud strip the `npx` part from the calls.*
+To scaffold an instant Tailwind & JS Zou! project:
 
-### The prompt will ask:
+```
+zou create myWebsite -tw -vsc
+```
+
+The full machine with Jest testing, JS TypesChecking via JSDoc, HTML docs generation for both Javascript and SCSS via jsDoc and sassDoc, plus the rest of the Zou! features:
+
+```
+zou create myProject -full -vsc
+```
+
+For TypeScript, don't use any flag and anwser to the prompt ;)
+
+
+## Talk to the prompt
+
+No flags, just having a conversation:
+
+```
+zou create myWebsite
+```
+
+### Zou! will ask:
 
 <details>
   <summary>Author:</summary>
@@ -49,30 +66,59 @@ npm install -g zoucli
 
 <details>
   <summary>What CSS flavor?</summary>
-  <p>A select prompt will make you chose between SCSS and Tailwind setups. On top of the SCSS one, OpenProps is also integrated, and managing the Dark/Light theming.</p>
+  <p>Choices: **SCSS** or **Tailwind**. On top of the SCSS one, [OpenProps](https://open-props.style/) is also integrated, and managing the Dark/Light theming. We can indeed go for just Vanilla CSS in the SCSS setup. For Bootstrap, Chota and more, just {{ cdn.pkg('bootstrap')}} in the layout's Head. *[see available packages](https://github.com/AndiKod/zouMacros)*</p>
 </details>
 
 <details>
   <summary>What Scripting?</summary>
-  <p>The choice here is between Javascript or Typescript. The Javascript is processed by ESBuild and optimised for production when ready. Hyperscript provides the interactivity (and some fun). On the side of Typescript, it's simply a main.ts as souce, tsconfig file and TSC compile NPM scripts.</p>
+  <p>Choices: **Javascript** or **Typescript**. The Javascript is processed by ESBuild and optimised for production when ready. [Hyperscript](https://hyperscript.org/docs/#basics) provides the interactivity *(and some fun)*. On the side of Typescript, it's simply a main.ts as souce, tsconfig file and TSC compile NPM scripts.</p>
 </details>
 
 <details>
-  <summary>Play with some CDN</summary>
-  <p>Pick (By pressing the Spacebar!)one or more CDNs like ChotaCSS, Bootstrap, AlpineJS, PocketBase, htmX (I know), from zouMacros package. You can also add/remove them easily afterwards by adding/removing things like `{{ cdn.pkg('bulma')}}` in the head section of a layout.</p>
+  <summary>Enable sassDoc generation?</summary>
+  <p>Needs to be installed with `npm i -g sassdoc`. A setup for **[sassDoc](http://sassdoc.com/getting-started/)**, generating a mini-website with scss documentation via code annotations. Add comments, types, todos in your SCSS, then `npm run docs` to generate.  Optional.</p>
+</details>
+
+<details>
+  <summary>Enable JSDoc & TypesCheck?</summary>
+  <p>**[JSDoc](https://jsdoc.app/)** brings TypesChecking to Vanilla JS, and great documentation. Two videos: [JSDoc Crash Course - Brad.Traversy](https://www.youtube.com/watch?v=YK-GurROGIg) and [JSDoc TypesCheck in 15min - codeSTACKr](https://www.youtube.com/watch?v=oH_-6TyxVhI). Optional.</p>
+</details>
+
+<details>
+  <summary>Enable JS Testing with Jest?</summary>
+  <p>Unit tests with the awesome **[Jest](https://jestjs.io/docs/getting-started)**. It will create a `tests` folder in the root, but you can organize as you want. When ready ... `npm run test`, or just `npm t`. Optional.</p>
 </details>
 
 <details>
   <summary>Open in VSCode?</summary>
-  <p>You can answer 'Nope' at that prompt and procede with NeoVim or hardcore Vi, but if you're using VSCode, Zou! will try to "code ." and open your project folder while installing the packages.</p>
+  <p>You can answer 'Nope' at that prompt and procede with NeoVim or hardcore Vi, but if you're using VSCode, Zou! will "code ." and open your project folder.</p>
 </details>
 
 <details>
-  <summary>Install packages Now?</summary>
-  <p>This Y/n prompt—if Y—will make Zou! move into `myWebsite` where all the files & folders were generated, open the folder in VSCode, launch an `npm install` then fire the dev server with `npm run dev` automatically when ready. Sit back & enjoy.</p>
+  <summary>Auto npm-install/run?</summary>
+  <p>This would programatically use NPM to install packages, then run `npm run dev` in one go. It's nice but can be a few seconds longer than the other options.</p>
 </details>
 
-## Pages database file auto-generated from frontmatter
+
+### Then will:
+
+- Instantly create `myWebsite` folder
+- ... and all needed files/folders inside.
+- Go there with `cd myWebsite` and
+- open in VSCode *(if asked for)*.
+
+You can simply `pnpm/yarn/npm install then run dev` from inside `myWebsite`
+  
+- Install packages with `npm install` &
+- launch `npm run dev` *(if asked for)*
+- Open the project in the default browser.  
+
+You're set and ready to rock! 
+
+
+
+
+## Pages database auto-generated from frontmatter
 
 On `npm run dev`, `npm run build` or directly from the root with `node bin/db`, Zou! will scan the /public folder for .html pages, and transform the HTML-frontmatter into the 'pages' object, stored and exporterd from /src/data/db.js
 
@@ -81,10 +127,10 @@ On `npm run dev`, `npm run build` or directly from the root with `node bin/db`, 
   ```
   <!-- src/pages/blog/article-one/index.njk -->
   {% block frontMatter %}
-  title: Article One
-  url: /blog/article-one
-  date: 1701621848
-  tags: [one, two, racoon]
+    title: Article One
+    url: /blog/article-one
+    date: 1701621848
+    tags: [one, two, racoon]
   {% endblock %}
   ```
   
@@ -176,7 +222,7 @@ module.exports.navMain = [
 ];
 ```
 
-Then made available to the temlates in `zou.config.js` 
+Then made available to the templates in `zou.config.js` 
 
 ```
 // zou.config.js
@@ -206,6 +252,27 @@ That way, in any template or partial like a header, we can just:
 
 We can duplicate the block in `src/data/nav.js` and repeat the rest of the steps, to create things like `navFooter`, `navSocials` or whatever other list.
 
+
+## SCSS Partials Subfolders 
+
+From 1.3.0, the SCSS files are organized in subfolders, inspired by the official [7-1 pattern](https://sass-guidelin.es/#architecture), [Kevin Powell](https://www.youtube.com/watch?v=9Ld-aOKsEDk) and personnal preferences. The starting structure is:
+
+
+```scss
+  @use "abstract";
+  @use "base";
+  @use "components";
+  @use "layout";
+  @use "pages";
+  @use "themes";
+  @use "vendors";
+  @use "utility";
+  @use "freestyle";
+```
+
+The freestyle folder imports the _getWild.scss partial, for random stuff quickly thrown there while prototyping or for whatever reason. See it like the TypeScript's any:scss.
+
+You can scaffold several Zou! projects, customize the SCSS folders and save them on github as starters with different structures.
 
 
 ## Scaffold a new Page
@@ -312,3 +379,17 @@ Fixed some misspelled filenames causing troubles with Tailwind & Typescript. It'
 
 **1.2.2**<br>
 - Fixed the commit message from the `zou git:save` command. It displayed the default message instead of the custom one, it's now back to normal.
+
+**1.3.0**<br>
+- SCSS files are now organized in 7-1 SASS inspired folders, imported into main.scss using the @forward/@use pattern. Use it as a starting point, of have fun "freestyling into the getWild zone" ;)
+
+**1.4.0**<br>
+**:: Aditions**<br>
+- Oneliner options to instantly scaffold projects with flags:
+- zou create myProject -y -vsc : SCSS + JS project and open it in VSCode
+- zou create myProject -tw -vsc : Tailwind + JS project and open it in VSCode
+- zou create myProject -full -vsc : SCSS/JS/Jest/JSDoc/sassDoc project and open it in VSCode
+- Without the -vsc flag, everything is still instantly created, you can just `cd myProject`.
+- Generally speaking, JS Testing & TypeChecking plus Docs generation are added as options.
+**:: Deprecation**<br>
+- The 'Play with CDN' prompt is removed, as we can simply use {{cdn.pkg('whatever')}} from within a layout folder, and having a select form would be a nightmare to maintain. Just check [zouMacros](https://github.com/AndiKod/zouMacros) for the available packages list.

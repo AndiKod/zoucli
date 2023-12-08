@@ -9,7 +9,13 @@ import checkbox from '@inquirer/checkbox';
 import {$} from 'zx';
 import rawlist from '@inquirer/rawlist';
 import fs from 'fs';
+import path from 'path';
 import process from "process";
+
+import { URL } from 'url'; // in Browser, the URL in native accessible on window
+const __filename = new URL('', import.meta.url).pathname;
+// Will contain trailing slash
+const __dirname = new URL('.', import.meta.url).pathname;
 
 
 /*
@@ -39,12 +45,16 @@ if (args.length < 1) {
   console.error("Check docs: github");
   process.exit(1); //an error occurred
 }
-else if (args.length > 2) {
+/*
+else if (args.length > 2 && args[2] !== '-y') {
   console.error("No spaces please. myProject, my-file, is the way ;)");
   process.exit(1); //an error occurred
 }
-
-
+else if (args.length > 2 && args[2] !== '-tw') {
+  console.error("No spaces please. myProject, my-file, is the way ;)");
+  process.exit(1); //an error occurred
+}
+*/
 
 // #create
 else if (args[0] == "create") {
@@ -55,82 +65,153 @@ else if (args[0] == "create") {
 *
 */
 
+// Initialize variables
+let author = "";
+let styles = "";
+let scripts = "";
+let sassDoc = "";
+let jsDoc = "";
+let tests = "";
+let vscode = "";
+let install = "";
+
+
+
+
+
+let projectName = args[1];
+const project = `./${projectName}`;
+
 
 /*
-*   --- Prompt ---
+*    If args[2] === -y > auto assigns values, else assign what comes from prompt
 */
 
-const answers = {
-  //project: await input({ message: "Project: " }),
-  author: await input({ message: "Author: ", default: "DevMysterio" }),
-  styles: await select({
-    message: 'What CSS flavor?',
-    choices: [
-      { 
-        name: 'SCSS', 
-        value: 'scss',
-        description: '...or CSS, works too.', 
-      },
-      { 
-        name: 'Tailwind', 
-        value: 'tailwind',
-        description: '...the Tailwind way. ',
-      },
-    ],
-  }),
-  scripts: await select({
-    message: 'What Scripting?',
-    choices: [
-      { 
-        name: 'Javascript', 
-        value: 'js',
-        description: 'Processed by ESBuild'
-      },
-      { 
-        name: 'Typescript', 
-        value: 'ts',
-        description: 'Compiled via TSC script'
-      },
-    ],
-  }),
-  
-  cdn: await checkbox({
-    message: 'Play with some CDN',
-    choices: [
-      new Separator('--- JS ---'),
-      {name: 'AlpineJS', value: 'alpinejs'},
-      {name: 'PocketBase', value: 'pocketbase'},
-      {name: 'htmX', value: 'htmx'},
-      new Separator('--- CSS ---'),
-      {name: 'Chota', value: 'chota'},
-      {name: 'Bonzai', value: 'bonzai'},
-      {name: 'Bootstrap', value: 'bootstrap'},
-    ]
-  }),
-  
-  vscode: await select({
-    message: 'Open in VSCode?',
-    choices: [
-      { 
-        name: 'Sure, why not', 
-        value: 'yep',
-        description: 'Will "code ." from root'
-      },
-      { name: 'Nope', 
-        value: 'nope',
-        description: 'I\'ll open it later'
-      },
-    ],
-  }),
-  install: await confirm({message: 'Install packages now ?', default: true})
-};
+if (args[2] === '-y') {
+
+  author = "DevMysterio";
+  styles = "scss";
+  scripts = "js";
+  sassDoc = false;
+  jsDoc = false;
+  tests = false;
+  vscode = true;
+  install = false;
+
+  if (args[3] === '-vsc') {
+    $`cd ${project} && code .`;
+  }
+
+} else if (args[2] === '-tw') {
+
+  author = "DevMysterio";
+  styles = "tailwind";
+  scripts = "js";
+  sassDoc = false;
+  jsDoc = false;
+  tests = false;
+  vscode = true;
+  install = false;
+
+  if (args[3] === '-vsc') {
+    $`cd ${project} && code .`;
+  }
+
+} else if (args[2] === '-full') {
+
+  author = "DevMysterio";
+  styles = "scss";
+  scripts = "js";
+  sassDoc = true;
+  jsDoc = true;
+  tests = true;
+  vscode = true;
+  install = false;
+
+  if (args[3] === '-vsc') {
+    $`cd ${project} && code .`;
+  }
+
+} else {
+
+
+
+    /*
+    *   --- Prompt ---
+    */
+
+    const answers = {
+      //project: await input({ message: "Project: " }),
+      author: await input({ message: "Author: ", default: "DevMysterio" }),
+      styles: await select({
+        message: 'What CSS flavor?',
+        choices: [
+          { 
+            name: 'SCSS', 
+            value: 'scss',
+            description: '...or CSS, works too.', 
+          },
+          { 
+            name: 'Tailwind', 
+            value: 'tailwind',
+            description: '...the Tailwind way. ',
+          },
+        ],
+      }),
+      scripts: await select({
+        message: 'What Scripting?',
+        choices: [
+          { 
+            name: 'Javascript', 
+            value: 'js',
+            description: 'Processed by ESBuild'
+          },
+          { 
+            name: 'Typescript', 
+            value: 'ts',
+            description: 'Compiled via TSC script'
+          },
+        ],
+      }),
+      sassDoc: await confirm({message: 'Enable sassDoc generation?', default: false}),
+      jsDoc: await confirm({message: 'Enable JSDoc & TypesCheck?', default: false}),
+      tests: await confirm({message: 'Enable JS Testing with Jest?', default: false}),
+
+      vscode: await select({
+        message: 'Open in VSCode?',
+        choices: [
+          { 
+            name: 'Sure, why not', 
+            value: 'yep',
+            description: 'Will "code ." from root'
+          },
+          { name: 'Nope', 
+            value: 'nope',
+            description: 'I\'ll do it, my way.'
+          },
+        ],
+      }),
+      install: await confirm({message: 'Auto npm-install/run?', default: false})
+    };
+
+
+  author = answers.author;
+  styles = answers.styles;
+  scripts = answers.scripts;
+  sassDoc = answers.sassDoc;
+  jsDoc = answers.jsDoc;
+  tests = answers.tests;
+  vscode = answers.vscode;
+  install = answers.install;
+
+}
+
+
 
 /*
 *   --- Creating Folders ---
 */
 
-let projectName = args[1];
-const project = `./${projectName}`;
 
 fs.mkdirSync(`./${project}`);
 fs.mkdirSync(project + '/bin');
@@ -143,6 +224,16 @@ fs.mkdirSync(project + '/src/partials');
 fs.mkdirSync(project + '/src/scripts');
 fs.mkdirSync(project + '/src/static');
 fs.mkdirSync(project + '/src/styles');
+
+if (tests) {
+  fs.mkdirSync(project + '/tests');
+}
+if (sassDoc || jsDoc) {
+  if(!fs.existsSync(__dirname + '/docs')) {
+    fs.mkdirSync(project + '/docs');
+  }
+}
+
 
 /*
 *   --- Creating Files ---
@@ -251,7 +342,7 @@ let jsFile = "";
 let cdn = "";
 let darkSwitch = "";
 
-if (answers.styles == 'scss') {
+if (styles == 'scss') {
   cssFile = '<link rel="stylesheet" href="/main.css" />';
   darkSwitch = `
     <script>
@@ -280,21 +371,22 @@ if (answers.styles == 'scss') {
       })();
     </script>
     `;
-} else if (answers.styles == 'tailwind') {
+} else if (styles == 'tailwind') {
   cssFile = '<link rel="stylesheet" href="/tw.css" />';
 }
 
-if (answers.scripts == 'js') {
+if (scripts == 'js') {
   jsFile = '<script src="/script.js"></script>';
-} else if (answers.scripts == 'ts') {
+} else if (scripts == 'ts') {
   jsFile = '<script src="/main.js"></script>';
 }
 
 
+/*
 for (let item in answers.cdn) {
   cdn += `{{ cdn.pkg('${answers.cdn[item]}') }}\n\t\t`
 }
-
+*/
 
 let pgLayoutsBase = project + '/src/layouts/base.njk';
 let pgLayoutsBaseContent = `<!--
@@ -347,7 +439,7 @@ fs.writeFile(pgLayoutsBase, pgLayoutsBaseContent, (err) => {
 
 let indexPage = "";
 
-if (answers.styles == 'scss') {
+if (styles == 'scss') {
 
   indexPage = `
   <figure onclick="toggleTheme()" style="padding-top:2rem;">
@@ -358,7 +450,7 @@ if (answers.styles == 'scss') {
       <img src="https://zoujs.vercel.app/static/images/z.png" width="50px">
     </figure>
     <h1>Zou!<span>JS</span></h1>
-    <h2 title="Click on me ;)" _="on click call alert('///_Hyperscript is Working!')">${projectName} project by ${answers.author}</h2>
+    <h2 title="Click on me ;)" _="on click call alert('///_Hyperscript is Working!')">${projectName} project by ${author}</h2>
     <nav style="margin-top:1.5rem;font-family:sans-serif;">
       / {% for link in data.links %} <a href="{{link.url}}">{{link.label}}</a> / {% endfor %} ...
     </nav>
@@ -405,13 +497,13 @@ if (answers.styles == 'scss') {
     }
   </style>`;
   
-} else if (answers.styles == 'tailwind') {
+} else if (styles == 'tailwind') {
 
   indexPage = `
   <main style="display:grid;justify-content: center;text-align:center;margin-top:3rem;">
     <img src="https://zoujs.vercel.app/static/images/z.png" width="50px" class="mx-auto mt-8">
     <h1>Zou!<span>JS</span></h1>
-    <h2 title="Click on me ;)" _="on click call alert('///_Hyperscript is Working!')">${projectName} project by ${answers.author}</h2>
+    <h2 title="Click on me ;)" _="on click call alert('///_Hyperscript is Working!')">${projectName} project by ${author}</h2>
     <nav style="margin-top:1.5rem;font-family:sans-serif;">
       / {% for link in data.links %} <a href="{{link.url}}">{{link.label}}</a> / {% endfor %} ...
     </nav>
@@ -489,8 +581,177 @@ fs.writeFile(pgPagesIndex, pgPagesIndexContent, (err) => {
 *   --- SCRIPTS ---
 */
 
+/* 
+*  Creating the Docs folder & index, 
+*  only if it's not a Tailwing + TypeScript project
+*/
 
-if (answers.scripts == 'js') {
+if (jsDoc || sassDoc) {
+
+
+  // FILE: --- /docs/index.html ---
+
+let indexDocs = project + '/docs/index.html';
+let indexDocsContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JS & SCSS Docs</title>
+  <!-- the props -->
+  <link rel="stylesheet" href="https://unpkg.com/open-props"/>
+  <!-- optional imports that use the props -->
+  <link rel="stylesheet" href="https://unpkg.com/open-props/normalize.min.css"/>
+</head>
+<body>
+  <header>
+    <h1>Docs frontpage</h1>
+  <p>Just a page with links to both folders.</p>
+  </header>
+  
+  <div class="topic">
+    <a href="./jsdoc/">
+      <h2>JS Doc</h2>
+    </a>
+    <iframe src="./jsdoc/" title="JS doc"></iframe>
+  </div>
+
+  
+  <div class="topic">
+    <a href="./sassdoc/">
+      <h2>SCSS Doc</h2>
+    </a>
+    <iframe src="./sassdoc/" title="JS doc"></iframe>
+  </div>
+
+
+  
+  <style>
+    body {
+      padding-block: var(--size-6);
+    }
+    header {
+      max-width: 80ch;
+      margin-inline: auto;
+      padding: var(--size-6);
+    }
+    .topic {
+      max-width: 90%;
+      margin-inline: auto;
+    }
+    .topic:last-of-type {
+      margin-bottom: 2rem;
+    }
+    iframe {
+      border-radius: var(--radius-2);
+      width: 100%;
+      height: 35rem;
+    }
+
+    .b {
+      border: 1px solid lightgreen;
+    }
+  </style>  
+</body>
+</html>`;
+fs.writeFile(indexDocs, indexDocsContent, (err) => {
+  if (err) throw err;
+  // docs/index.html Created!
+});
+
+}
+
+/*
+*  --- jsDoc ---
+*/
+
+
+if (jsDoc) {
+  // FILE: --- tsconfig.json ---
+
+  fs.mkdirSync(project + '/docs/jsTuts');  
+
+  let tsConfig = project + '/tsconfig.json';
+  let tsConfigContent = `{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "strict": true
+  }
+  }`;
+  fs.writeFile(tsConfig, tsConfigContent, (err) => {
+    if (err) throw err;
+    // tsconfig.json Created!
+  });
+
+  // FILE: --- jsdoc.json ---
+
+  let jsdocConfig = project + '/jsdoc.json';
+  let jsdocConfigContent = `{
+    "source": {
+      "include": ["src"],
+      "includePattern": ".js$",
+      "excludePattern": "(node_modules/|public/|docs)_"
+    },
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false
+    },
+    "plugins": ["plugins/markdown"],
+    "recurseDepth": 10,
+    "opts": {
+      "recurse": true,
+      "destination": "./docs/jsdoc/",
+      "tutorials": "./docs/jsTuts/",
+      "readme": "./docs/jsReadme.md"
+    }
+  }`;
+  fs.writeFile(jsdocConfig, jsdocConfigContent, (err) => {
+    if (err) throw err;
+    // jsdoc.json Created!
+  });
+
+
+  // FILE: --- docs/jsReadme.md ---
+
+  let jsReadme = project + '/docs/jsReadme.md';
+  let jsReadmeContent = `## Readme
+
+  Some markdown ...`;
+  fs.writeFile(jsReadme, jsReadmeContent, (err) => {
+    if (err) throw err;
+    // docs/jsReadme.md Created!
+  });
+
+  // FILE: --- docs/jsTuts/tut-one.md ---
+
+  let tutOne = project + '/docs/jsTuts/tut-one.md';
+  let tutOneContent = `## Ok, here we go
+
+  Some markdown ...`;
+  fs.writeFile(tutOne, tutOneContent, (err) => {
+    if (err) throw err;
+    // docs/jsTuts/tut-one.md Created!
+  });
+
+  // FILE: --- docs/jsReadme.md ---
+
+  let tutJson = project + '/docs/jsTuts/tutorial.json';
+  let tutJsonContent = `{
+    "tut-one": {
+      "title": "First Tutorial"
+    }
+  }`;
+  fs.writeFile(tutJson, tutJsonContent, (err) => {
+    if (err) throw err;
+    // docs/jsTuts/tutorial.json Created!
+  });
+} // -- End jsDoc & TypesCheck section --
+
+
+
+
+if (scripts == 'js') {
 
   // FILE: --- scr/scripts/main.js ---
 
@@ -501,7 +762,7 @@ if (answers.scripts == 'js') {
     // scr/scripts/main.js Created!
   });
   
-} else if (answers.scripts == 'ts') {
+} else if (scripts == 'ts') {
 
   // FILE: --- scr/scripts/main.ts ---
 
@@ -629,7 +890,7 @@ if (answers.scripts == 'js') {
 *   --- STYLES ---
 */
 
-if (answers.styles == 'tailwind') {
+if (styles == 'tailwind') {
 
   // FILE: --- tailwind.config.js ---
 
@@ -660,37 +921,166 @@ if (answers.styles == 'tailwind') {
     // src/styles/tw-input.css Created!
   });
   
-} else if (answers.styles == 'scss') {
+} else if (styles == 'scss') {
 
-  // FILE: --- src/styles/main.scss ---
 
-  let scssMain = project + '/src/styles/main.scss';
-  let scssMainContent = `
-@use "_themes";
 
-/*
-@use "../../node_modules/zoumixins/cssowl/before" as owl;
-.withMixin {
-  @include owl.cssowl-before-float("*", 4px 10px 0 0);
-}
-*/
+// 7-1 Folders Structure
+fs.mkdirSync(project + '/src/styles/abstract');
+fs.mkdirSync(project + '/src/styles/base');
+fs.mkdirSync(project + '/src/styles/components');
+fs.mkdirSync(project + '/src/styles/layout');
+fs.mkdirSync(project + '/src/styles/pages');
+fs.mkdirSync(project + '/src/styles/themes');
+fs.mkdirSync(project + '/src/styles/vendors');
+fs.mkdirSync(project + '/src/styles/utility');
+fs.mkdirSync(project + '/src/styles/freestyle');
 
-@import "https://unpkg.com/open-props";
-@import "https://unpkg.com/open-props/normalize.min.css";
-@import "https://unpkg.com/open-props/buttons.min.css";
 
-body {
-  color: var(--text-1);
-}`;
-  fs.writeFile(scssMain, scssMainContent, (err) => {
+  /// ABSTRACT
+
+  // FILE: --- src/styles/abstract/_variables.scss --- 
+  let scssVars = project + '/src/styles/abstract/_variables.scss';
+  let scssVarsContent = `/* Variables */`;
+  fs.writeFile(scssVars, scssVarsContent, (err) => {
+    if (err) throw err;
+    // src/styles/abstract/_variables.scss Created!
+  });
+
+  // FILE: --- src/styles/abstract/_functions.scss --- 
+  let scssFunc = project + '/src/styles/abstract/_functions.scss';
+  let scssFuncContent = `/* Functions */`;
+  fs.writeFile(scssFunc, scssFuncContent, (err) => {
+    if (err) throw err;
+    // src/styles/abstract/_functions.scss Created!
+  });
+
+  // FILE: --- src/styles/abstract/_mixins.scss --- 
+  let scssMixins = project + '/src/styles/abstract/_mixins.scss';
+  let scssMixinsContent = `/* Mixins */`;
+  fs.writeFile(scssMixins, scssMixinsContent, (err) => {
+    if (err) throw err;
+    // src/styles/abstract/_mixins.scss Created!
+  });
+
+  // FILE: --- src/styles/abstract/_index.scss --- 
+  let scssAbstract = project + '/src/styles/abstract/_index.scss';
+  let scssAbstractContent = `/* Abstract */
+  @forward "variables";
+  @forward "functions";
+  @forward "mixins";`;
+  fs.writeFile(scssAbstract, scssAbstractContent, (err) => {
     if (err) throw err;
     // src/styles/main.scss Created!
   });
 
-  // FILE: --- src/styles/_themes.scss ---
+  /// BASE
 
-  let scssThemes = project + '/src/styles/_themes.scss';
-  let scssThemesContent = `// Dark theme
+  // FILE: --- src/styles/base/_reset.scss --- 
+  let scssReset = project + '/src/styles/base/_reset.scss';
+  let scssResetContent = `/* Reset */`;
+  fs.writeFile(scssReset, scssResetContent, (err) => {
+    if (err) throw err;
+    // src/styles/base/_reset.scss Created!
+  });
+
+  // FILE: --- src/styles/base/_typography.scss --- 
+  let scssTypography = project + '/src/styles/base/_typography.scss';
+  let scssTypographyContent = `/// The general Typography defaults
+/// @todo Write some real code here
+  body {
+    color: var(--text-1);
+  }
+  `;
+  fs.writeFile(scssTypography, scssTypographyContent, (err) => {
+    if (err) throw err;
+    // src/styles/base/_typography.scss Created!
+  });
+
+  // FILE: --- src/styles/base/_index.scss --- 
+  let scssBase = project + '/src/styles/base/_index.scss';
+  let scssBaseContent = `/* Base */
+  @forward "reset";
+  @forward "typography";`;
+  fs.writeFile(scssBase, scssBaseContent, (err) => {
+    if (err) throw err;
+    // src/styles/base/_index.scss Created!
+  });
+
+  /// COMPONENTS
+
+  // FILE: --- src/styles/components/_buttons.scss --- 
+  let scssButtons = project + '/src/styles/components/_buttons.scss';
+  let scssButtonsContent = `/* Buttons */`;
+  fs.writeFile(scssButtons, scssButtonsContent, (err) => {
+    if (err) throw err;
+    // src/styles/components/_buttons.scss Created!
+  });
+
+  // FILE: --- src/styles/components/_index.scss --- 
+  let scssComponents = project + '/src/styles/components/_index.scss';
+  let scssComponentsContent = `/* Components */
+  @forward "buttons";`;
+  fs.writeFile(scssComponents, scssComponentsContent, (err) => {
+    if (err) throw err;
+    // src/styles/components/_index.scss Created!
+  });
+
+  /// LAYOUT
+
+  // FILE: --- src/styles/layout/_header.scss --- 
+  let scssHeader = project + '/src/styles/layout/_header.scss';
+  let scssHeaderContent = `/* Header */`;
+  fs.writeFile(scssHeader, scssHeaderContent, (err) => {
+    if (err) throw err;
+    // src/styles/layout/_header.scss Created!
+  });
+
+  // FILE: --- src/styles/layout/_footer.scss --- 
+  let scssFooter = project + '/src/styles/layout/_footer.scss';
+  let scssFooterContent = `/* Footer */`;
+  fs.writeFile(scssFooter, scssFooterContent, (err) => {
+    if (err) throw err;
+    // src/styles/layout/_footer.scss Created!
+  });
+
+  // FILE: --- src/styles/layout/_index.scss --- 
+  let scssLayout = project + '/src/styles/layout/_index.scss';
+  let scssLayoutContent = `/* Layout */
+  @forward "header";
+  @forward "footer";`;
+  fs.writeFile(scssLayout, scssLayoutContent, (err) => {
+    if (err) throw err;
+    // src/styles/layout/_index.scss Created!
+  });
+
+  /// PAGES
+
+  // FILE: --- src/styles/pages/_home.scss --- 
+  let scssHome = project + '/src/styles/pages/_home.scss';
+  let scssHomeContent = `/* Home */`;
+  fs.writeFile(scssHome, scssHomeContent, (err) => {
+    if (err) throw err;
+    // src/styles/pages/_home.scss Created!
+  });
+
+  // FILE: --- src/styles/pages/_index.scss --- 
+  let scssPages = project + '/src/styles/pages/_index.scss';
+  let scssPagesContent = `/* Pages */
+  @forward "home";`;
+  fs.writeFile(scssPages, scssPagesContent, (err) => {
+    if (err) throw err;
+    // src/styles/pages/_index.scss Created!
+  });
+
+
+  /// THEMES
+
+  // FILE: --- src/styles/themes/_theme.scss --- 
+  let scssTheme = project + '/src/styles/themes/_theme.scss';
+  let scssThemeContent = `/* Theme */
+
+  // Dark theme
 body.dark {
   --bg: linear-gradient(-45deg, #d84d23, #e2af22, #86c232);
   --brand: var(--lime-6);
@@ -705,16 +1095,125 @@ body.light {
   --surface-1: var(--sand-0);
   --text-1: var(--sand-10);
 }`;
+  fs.writeFile(scssTheme, scssThemeContent, (err) => {
+    if (err) throw err;
+    // src/styles/themes/_theme.scss Created!
+  });
+
+  // FILE: --- src/styles/themes/_index.scss --- 
+  let scssThemes = project + '/src/styles/themes/_index.scss';
+  let scssThemesContent = `/* Themes */
+  @forward "theme";`;
   fs.writeFile(scssThemes, scssThemesContent, (err) => {
     if (err) throw err;
-    // src/styles/_themes.scss Created!
+    // src/styles/themes/_index.scss Created!
   });
+
+  /// VENDORS
+
+  // FILE: --- src/styles/vendors/_open-props.scss --- 
+  let scssOProps = project + '/src/styles/vendors/_open-props.scss';
+  let scssOPropsContent = `/* OpenProps */
+/// @see https://open-props.style/
+
+@import "https://unpkg.com/open-props";
+@import "https://unpkg.com/open-props/normalize.min.css";
+  `;
+  fs.writeFile(scssOProps, scssOPropsContent, (err) => {
+    if (err) throw err;
+    // src/styles/vendors/_open-props.scss Created!
+  });
+
+  // FILE: --- src/styles/vendors/_index.scss --- 
+  let scssVendors = project + '/src/styles/vendors/_index.scss';
+  let scssVendorsContent = `/* Vendors */
+  @forward "open-props";`;
+  fs.writeFile(scssVendors, scssVendorsContent, (err) => {
+    if (err) throw err;
+    // src/styles/vendors/_index.scss Created!
+  });
+
+  /// UTILITY
+
+  // FILE: --- src/styles/utility/_classes.scss --- 
+  let scssClasses = project + '/src/styles/utility/_classes.scss';
+  let scssClassesContent = `/* Classes */`;
+  fs.writeFile(scssClasses, scssClassesContent, (err) => {
+    if (err) throw err;
+    // src/styles/utility/_classes.scss Created!
+  });
+
+  // FILE: --- src/styles/utility/_index.scss --- 
+  let scssUtility = project + '/src/styles/utility/_index.scss';
+  let scssUtilityContent = `/* Pages */
+  @forward "classes";`;
+  fs.writeFile(scssUtility, scssUtilityContent, (err) => {
+    if (err) throw err;
+    // src/styles/utility/_index.scss Created!
+  });
+
+  /// FREESTYLE
+
+  // FILE: --- src/styles/freestyle/_getWild.scss --- 
+  let scssWild = project + '/src/styles/freestyle/_getWild.scss';
+  let scssWildContent = `/* Get Wild :) Random stuff */`;
+  fs.writeFile(scssWild, scssWildContent, (err) => {
+    if (err) throw err;
+    // src/styles/freestyle/_getWild.scss Created!
+  });
+
+  // FILE: --- src/styles/freestyle/_index.scss --- 
+  let scssFreestyle = project + '/src/styles/freestyle/_index.scss';
+  let scssFreestyleContent = `/* Freestyle */
+  @forward "getWild";`;
+  fs.writeFile(scssFreestyle, scssFreestyleContent, (err) => {
+    if (err) throw err;
+    // src/styles/freestyle/_index.scss /jsCreated!
+  });
+
+
+  
+
+
+
+
+
+
+
+
+
+  // FILE: --- src/styles/main.scss ---
+
+  let scssMain = project + '/src/styles/main.scss';
+  let scssMainContent = `
+
+  @use "abstract";
+  @use "base";
+  @use "components";
+  @use "layout";
+  @use "pages";
+  @use "themes";
+  @use "vendors";
+  @use "utility";
+  @use "freestyle";
+
+`;
+  fs.writeFile(scssMain, scssMainContent, (err) => {
+    if (err) throw err;
+    // src/styles/main.scss Created!
+  });
+
+  
+
+  
 
 }
 
 
+
+
 /*
-*   --- ZOU Config ---
+*   --- Config Files ---
 */
 
 
@@ -869,6 +1368,7 @@ fs.writeFile(zouConfig, zouConfigContent, (err) => {
 });
 
 
+
 /*
 *   --- Package.json ---
 */
@@ -882,12 +1382,20 @@ let jsScript = "";
 let tsScript = "";
 let sassPkg = "";
 let twPkg = "";
+let jestScript = "";
+let jestPkg = "";
+
+let docsScript = "";
+let sassdocScript = "";
+let jsdocScript = "";
+let jsdocPkg = "";
+
 
 
 
 // --- Styles ---
 
-if (answers.styles == "scss") {
+if (styles == "scss") {
 
   scssScript = `"w-sass": "sass  --no-source-map --watch src/styles:public",
     "b-sass": "sass  --no-source-map src/styles:public --style compressed",`;
@@ -903,7 +1411,7 @@ if (answers.styles == "scss") {
 
 // --- Scripts ---
 
-if (answers.scripts == "js") {
+if (scripts == "js") {
 
   jsScript = `"w-js": "npx esbuild src/scripts/main.js --outfile=public/script.js --bundle --watch",
     "b-js": "npx esbuild src/scripts/main.js --outfile=public/script.js --bundle --minify",`;
@@ -915,6 +1423,38 @@ if (answers.scripts == "js") {
 
 }
 
+// --- Jest ---
+
+if (tests) {
+  jestScript = `"test": "jest",`;
+  jestPkg = `"jest": "^29.7.0",`
+} 
+
+
+// --- jsDoc ---
+
+if (jsDoc) {
+  jsdocScript = `"d-js": "jsdoc -c jsdoc.json",`;
+  jsdocPkg = `"jsdoc": "^4.0.2",
+    "typescript": "^5.3.2",`;
+
+  if (!docsScript) {
+    docsScript = `"docs": "npm-run-all --parallel d-*",`;
+  }
+} 
+
+// --- sassDoc ---
+
+if (sassDoc) {
+  sassdocScript = `"d-sass": "sassdoc src/styles/**/* -d ./docs/sassdoc",`;
+
+  if (!docsScript) {
+    docsScript = `"docs": "npm-run-all --parallel d-*"`;
+  }
+} 
+
+
+
 // --- Packages
 
 
@@ -925,7 +1465,7 @@ let pkgJsonContent = `{
   "name": "${projectName}",
   "version": "1.0.0",
   "description": "Say some words about your project",
-  "author": "${answers.author}",
+  "author": "${author}",
   "license": "ISC",
   "main": "index.js",
   "scripts": {
@@ -933,6 +1473,10 @@ let pkgJsonContent = `{
     ${scssScript}
     ${jsScript}
     ${tsScript}
+    ${jestScript}
+    ${jsdocScript}
+    ${sassdocScript}
+    ${docsScript}
     "b-pages": "nunjucks-to-html --config zou.config.js --baseDir src/pages",
     "c-static": "copyfiles -u 1 \\"./src/static/**/*\\" \\"public\\"",
     "c-root": "copyfiles -u 1 \\"./src/favicon.ico\\" \\"./src/*.txt\\"   \\"public\\"",
@@ -943,12 +1487,14 @@ let pkgJsonContent = `{
     "build": "npm-run-all bin --parallel b-*",
     "serve": "alive-server public",
     "dev": "npm-run-all bin copy b-pages --parallel watch serve",
-    "postbuild": "postcss public/*.css -u autoprefixer cssnano -r --no-map"
+    "postbuild": "postcss public/*.css -u autoprefixer cssnano -r --no-map" 
   },
   "dependencies": {},
   "devDependencies": {
     ${sassPkg}
     ${twPkg}
+    ${jestPkg}
+    ${jsdocPkg}
     "nunjucks-to-html": "^1.1.0",
     "onchange": "^7.1.0",
     "copyfiles": "^2.4.1",
@@ -971,15 +1517,34 @@ fs.writeFile(pkgJson, pkgJsonContent, (err) => {
 });
 
 
-if (answers.install) {
+
+
+
+if (install) {
 
   console.log(chalk.bold.magenta('\nLet\'s Go!') + " ..."+ chalk.italic('Zou! steaming, let him cook ;)') )
-  if (answers.vscode == 'yep') {
+  console.log('||| Building. Give it a little minute.\n')
+  if (vscode == 'yep') {
     $`cd ${projectName} && code . && npm install && npm run dev`;
   } else {
     $`cd ${projectName} && npm install && npm run dev`;
   } 
    
+} else {
+
+  if (vscode == 'yep') {
+    console.log(chalk.bold.magenta('\nLet\'s Go!') + " ..."+ chalk.italic('When ready:') )
+    console.log(chalk.bold('pnpm')+', yarn or npm install,')
+    console.log('...then '+ chalk.italic('run dev')+'\n')
+
+    $`cd ${projectName} && code .`;
+  } else {
+    console.log(chalk.bold.magenta('\nLet\'s Go!') + " ..."+ chalk.italic('When ready:') )
+    console.log(`> cd ${projectName}`)
+    console.log(chalk.bold('pnpm')+', yarn or npm install,')
+    console.log('...then '+ chalk.italic('run dev')+'\n')
+  }
+
 }
 
 // End:  zou create myProject
