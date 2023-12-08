@@ -1,10 +1,13 @@
 # Zou! CLI - SSG
 
-Scaffold a custom Zou! SSG project and more, with interactive prompt (pages, git, deploy, ...)
+Scaffold a custom Zou! SSG project and more, with interactive prompts.
 
-*— Prononced like 'zoo' or 'zu' in italian/romanian,... Zou! is a french interjection that stands for: JustDoIt! GoAhead! Let'sGo!*
+*— Prononced like 'zoo' or 'zu' in italian/romanian,...*<br>
+*Zou! is a french interjection that stands for: JustDoIt! GoAhead! Let'sGo!*
 
-Simple SSG with close to zero configuration going back to the basics. No JS framework, no mega-bundler, almost nothing new to learn beyond HTML, CSS, JS yet it does the job "out of the box". #HaveFun
+Simple SSG with close to zero configuration going back to the basics with feel good vibes.
+
+No JS framework, no mega-bundler, almost nothing new to learn beyond HTML, CSS, JS yet it does the job "out of the box" . #HaveFun
 
 
 | -Folder- | -Purpose-    |
@@ -20,6 +23,7 @@ Simple SSG with close to zero configuration going back to the basics. No JS fram
 | **src/Static:** | Assets to be copied to public, generally images |
 | **src/Styles:** | SCSS (w/ subfolders partials) / Tailwind. Whatever flavor you like |
 | **Tests** | *-if enabled-* A default folder for *thing.test.js* files, but it's up to you |
+
 
 
 
@@ -66,27 +70,27 @@ zou create myWebsite
 
 <details>
   <summary>What CSS flavor?</summary>
-  <p>Choices: **SCSS** or **Tailwind**. On top of the SCSS one, [OpenProps](https://open-props.style/) is also integrated, and managing the Dark/Light theming. We can indeed go for just Vanilla CSS in the SCSS setup. For Bootstrap, Chota and more, just {{ cdn.pkg('bootstrap')}} in the layout's Head. *[see available packages](https://github.com/AndiKod/zouMacros)*</p>
+  <p>Choices: <strong>SCSS</strong> or <strong>Tailwind</strong>. On top of the SCSS one, <a href="https://open-props.style/">OpenProps</a> is also integrated, and managing the Dark/Light theming. We can indeed go for just Vanilla CSS in the SCSS setup. For Bootstrap, Chota and more, just <code>{{ cdn.pkg('bootstrap')}}</code> in the layout's Head. <em><a href="https://github.com/AndiKod/zouMacros">see available packages</a></em></p>
 </details>
 
 <details>
   <summary>What Scripting?</summary>
-  <p>Choices: **Javascript** or **Typescript**. The Javascript is processed by ESBuild and optimised for production when ready. [Hyperscript](https://hyperscript.org/docs/#basics) provides the interactivity *(and some fun)*. On the side of Typescript, it's simply a main.ts as souce, tsconfig file and TSC compile NPM scripts.</p>
+  <p>Choices: <strong>Javascript</strong> or <strong>Typescript</strong>. The Javascript is processed by ESBuild and optimised for production when ready. <a href="https://hyperscript.org/docs/#basics">Hyperscript</a> provides the interactivity <em>(and some fun)</em>. On the side of Typescript, it's simply a main.ts as souce, tsconfig file and TSC compile NPM scripts.</p>
 </details>
 
 <details>
   <summary>Enable sassDoc generation?</summary>
-  <p>Needs to be installed with `npm i -g sassdoc`. A setup for **[sassDoc](http://sassdoc.com/getting-started/)**, generating a mini-website with scss documentation via code annotations. Add comments, types, todos in your SCSS, then `npm run docs` to generate.  Optional.</p>
+  <p>Needs to be installed with `npm i -g sassdoc`. A setup for <strong><a href="http://sassdoc.com/getting-started/">sassDoc</a></strong>, generating a mini-website with scss documentation via code annotations. Add comments, types, todos in your SCSS, then `npm run docs` to generate.  Optional.</p>
 </details>
 
 <details>
   <summary>Enable JSDoc & TypesCheck?</summary>
-  <p>**[JSDoc](https://jsdoc.app/)** brings TypesChecking to Vanilla JS, and great documentation. Two videos: [JSDoc Crash Course - Brad.Traversy](https://www.youtube.com/watch?v=YK-GurROGIg) and [JSDoc TypesCheck in 15min - codeSTACKr](https://www.youtube.com/watch?v=oH_-6TyxVhI). Optional.</p>
+  <p><strong><a href="https://jsdoc.app/">JSDoc</a><strong> brings TypesChecking to Vanilla JS, and great documentation. Two videos: <a href="https://www.youtube.com/watch?v=YK-GurROGIg">JSDoc Crash Course - Brad.Traversy</a> and <a href="https://www.youtube.com/watch?v=oH_-6TyxVhI">JSDoc TypesCheck in 15min - codeSTACKr</a>. Optional.</p>
 </details>
 
 <details>
   <summary>Enable JS Testing with Jest?</summary>
-  <p>Unit tests with the awesome **[Jest](https://jestjs.io/docs/getting-started)**. It will create a `tests` folder in the root, but you can organize as you want. When ready ... `npm run test`, or just `npm t`. Optional.</p>
+  <p>Unit tests with the awesome <strong><a href="https://jestjs.io/docs/getting-started">Jest</a></strong>. It will create a `tests` folder in the root, but you can organize as you want. When ready ... `npm run test`, or just `npm t`. Optional.</p>
 </details>
 
 <details>
@@ -361,35 +365,46 @@ Related Docs, *just in case*: [Nunjucks](https://mozilla.github.io/nunjucks/temp
 Via [zouMacros](https://github.com/AndiKod/zouMacros): [AlpineJS](https://alpinejs.dev/start-here), [htmX](https://htmx.org/), [Pocketbase](https://pocketbase.io/docs/), [ChotaCSS](https://jenil.github.io/chota/#docs), [BonsaiCSS](https://www.bonsaicss.com/), [Bulma](https://bulma.io/documentation/), [Bootstrap](https://getbootstrap.com/docs/5.3/getting-started/introduction/) Comming soon: [Supabase](https://supabase.com/docs/guides/database/overview), [Planetscale](https://planetscale.com/docs).
 
 
+---
 
 ## Changelog
 
-**1.1.0**<br>
+#### 1.1.0
+
 Added the `deploy:vercel`, `deploy:netlify`, `git:save` commands and fixed the postbuild script.
 
-**1.1.1**<br>
+#### 1.1.1
+
 Fixed some misspelled filenames causing troubles with Tailwind & Typescript. It's fine now.
 
-**1.2.0**<br>
+#### 1.2.0
+
 - Added FrontMatter support to the pages in the templates
 - Automatic 'database' object with the data from the frontmatter
 - Collections, Tags, limitFromTo(), withTag('something'), ... Nunjucks filters
 - Navigation objects generating navMain, navFooter,...
 - and maybe other things I can't remenber
 
-**1.2.2**<br>
+#### 1.2.2 
+
 - Fixed the commit message from the `zou git:save` command. It displayed the default message instead of the custom one, it's now back to normal.
 
-**1.3.0**<br>
+#### 1.3.0
+
 - SCSS files are now organized in 7-1 SASS inspired folders, imported into main.scss using the @forward/@use pattern. Use it as a starting point, of have fun "freestyling into the getWild zone" ;)
 
-**1.4.0**<br>
-**:: Aditions**<br>
+#### 1.4.0
+
+**:: Aditions**
+
 - Oneliner options to instantly scaffold projects with flags:
 - zou create myProject -y -vsc : SCSS + JS project and open it in VSCode
 - zou create myProject -tw -vsc : Tailwind + JS project and open it in VSCode
 - zou create myProject -full -vsc : SCSS/JS/Jest/JSDoc/sassDoc project and open it in VSCode
 - Without the -vsc flag, everything is still instantly created, you can just `cd myProject`.
 - Generally speaking, JS Testing & TypeChecking plus Docs generation are added as options.
-**:: Deprecation**<br>
+  
+
+**:: Deprecation**
+
 - The 'Play with CDN' prompt is removed, as we can simply use {{cdn.pkg('whatever')}} from within a layout folder, and having a select form would be a nightmare to maintain. Just check [zouMacros](https://github.com/AndiKod/zouMacros) for the available packages list.
