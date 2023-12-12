@@ -1,3 +1,7 @@
+<p align="center" width="100%">
+    <img width="25%" src="./ZouJS.png">
+</p>
+
 # Zou! CLI - SSG
 
 Scaffold a custom Zou! SSG project and more, with interactive prompts.
@@ -31,7 +35,7 @@ No JS framework, no mega-bundler, almost nothing new to learn beyond HTML, CSS, 
 
 From v1.4.0, simulating "yes" answers to the propmt, a core SCSS+JS project will be instantly created. 
 
-The optional flags -vsc, -vim, -nvim at the end `npx zou create myProj -y -vim` will open the generated folder in VSCode, Vim or neoVim, so you could finish from there with your favorite package manager. Just `pnpm/yarn/npm i` then `run dev`. 
+The optional flags **-vsc**, **-vim**, **-nvim** at the end `npx zou create myProj -y -vim` will open the generated folder in **VSCode**, **Vim** or **neoVim**, so you could finish from there with your favorite package manager. Just `pnpm/yarn/npm i` then `run dev`. 
 
 ```
 npx zou create myWebsite -y
@@ -46,7 +50,7 @@ To scaffold an instant Tailwind & JS Zou! project:
 zou create myWebsite -tw
 ```
 
-The full machine with Jest testing, JS TypesChecking via JSDoc, HTML docs generation for both Javascript and SCSS via jsDoc and sassDoc, plus the rest of the Zou! features:
+The full machine with Jest, JS TypesChecking via JSDoc, docs generation for both Javascript and SCSS via jsDoc and sassDoc, plus the rest of the Zou! features. To disable/enable types chacking, edit `tsconfig.json` file in the root.
 
 ```
 zou create myProject -full
@@ -86,8 +90,8 @@ zou create myWebsite
 </details>
 
 <details>
-  <summary>Enable JSDoc & TypesCheck?</summary>
-  <p><strong><a href="https://jsdoc.app/">JSDoc</a></strong> brings TypesChecking to Vanilla JS, and great documentation. Two videos: <a href="https://www.youtube.com/watch?v=YK-GurROGIg">JSDoc Crash Course - Brad.Traversy</a> and <a href="https://www.youtube.com/watch?v=oH_-6TyxVhI">JSDoc TypesCheck in 15min - codeSTACKr</a>. Optional.</p>
+  <summary>Enable JSDoc generation?</summary>
+  <p><strong><a href="https://jsdoc.app/">JSDoc</a></strong> generates great documentation for JS code. See: <a href="https://www.youtube.com/watch?v=YK-GurROGIg">JSDoc Crash Course - Brad.Traversy</a>. Optional.</p>
 </details>
 
 <details>
@@ -96,30 +100,22 @@ zou create myWebsite
 </details>
 
 <details>
-  <summary>Open in VSCode?</summary>
-  <p>You can answer 'Nope' at that prompt and procede with NeoVim or hardcore Vi, but if you're using VSCode, Zou! will "code ." and open your project folder.</p>
+  <summary>TypesChecking via JSDoc ?</summary>
+  <p><strong><a href="https://jsdoc.app/">JSDoc Types Checking</a></strong> for vanilla JS code. See: <a href="https://www.youtube.com/watch?v=oH_-6TyxVhI">JSDoc TypesCheck in 15min - codeSTACKr</a>. Optional.</p>
 </details>
 
 <details>
-  <summary>Auto npm-install/run?</summary>
-  <p>This would programatically use NPM to install packages, then run `npm run dev` in one go. It's nice but can be a few seconds longer than the other options.</p>
+  <summary>Your code Editor</summary>
+  <p>Chose between VSCode, Vim or NeoVim as your primary code editor. The script can open your project in your editor.</p>
+</details>
+
+<details>
+  <summary>Open the project in the Editor ?</summary>
+  <p>If the answer to the previous question was not "Other", the project will open.</p>
 </details>
 
 
-### Then will:
-
-- Instantly create `myWebsite` folder
-- ... and all needed files/folders inside.
-- Go there with `cd myWebsite` and
-- open in VSCode *(if asked for)*.
-
-You can simply `pnpm/yarn/npm install then run dev` from inside `myWebsite`
-  
-- Install packages with `npm install` &
-- launch `npm run dev` *(if asked for)*
-- Open the project in the default browser.  
-
-You're set and ready to rock! 
+That's it. Enjoy.
 
 
 
@@ -410,3 +406,18 @@ Fixed some misspelled filenames causing troubles with Tailwind & Typescript. It'
 **:: Deprecation**
 
 - The 'Play with CDN' prompt is removed, as we can simply use {{cdn.pkg('whatever')}} from within a layout folder, and having a select form would be a nightmare to maintain. Just check [zouMacros](https://github.com/AndiKod/zouMacros) for the available packages list.
+  
+ #### 1.5.0
+
+**:: Aditions**
+
+- We can now chose between VSCode, Vim or NeoVim as prefered editors and let Zou! open the created project in it so we could code right away.
+- Flags for "oneliners" are also added, as `-vsc`/`-vim`/`-nvim` at the end of the command, as in `zou create myProj -y -vim`
+
+**:: Deprecation**
+
+- The 'Install' prompt is removed. Just use whatever package manager to install then run scripts.
+
+**:: Fixed**
+
+- The script for the SCSS docs generation was causing a duplicate generation in the HTML.
