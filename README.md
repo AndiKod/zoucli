@@ -5,7 +5,7 @@ Scaffold a custom Zou! SSG project and more, with interactive prompts.
 *— Prononced like 'zoo' or 'zu' in italian/romanian,...*<br>
 *Zou! is a french interjection that stands for: JustDoIt! GoAhead! Let'sGo!*
 
-Simple SSG with close to zero configuration going back to the basics with feel good vibes.
+Simple SSG with close to zero configuration, going back to the basics.
 
 No JS framework, no mega-bundler, almost nothing new to learn beyond HTML, CSS, JS yet it does the job "out of the box" . #HaveFun
 
@@ -29,25 +29,27 @@ No JS framework, no mega-bundler, almost nothing new to learn beyond HTML, CSS, 
 
 ## Scaffold a new Zou! project, the "one liner way"
 
-From v1.4.0, simulating "yes" answers to the propmt, a new SCSS+Javascript project will be instantly created. The optional flag -vsc will open the folder in VSCode, so you could finish from there with your favorite package manager. Just `pnpm/yarn/npm i` then `run dev`. 
+From v1.4.0, simulating "yes" answers to the propmt, a core SCSS+JS project will be instantly created. 
+
+The optional flags -vsc, -vim, -nvim at the end `npx zou create myProj -y -vim` will open the generated folder in VSCode, Vim or neoVim, so you could finish from there with your favorite package manager. Just `pnpm/yarn/npm i` then `run dev`. 
 
 ```
-npx zou create myWebsite -y -vsc
+npx zou create myWebsite -y
 
 // or first: npm i -g zoucli ...then:
-zou create myWebsite -y -vsc
+zou create myWebsite -y
 ```
 
 To scaffold an instant Tailwind & JS Zou! project:
 
 ```
-zou create myWebsite -tw -vsc
+zou create myWebsite -tw
 ```
 
 The full machine with Jest testing, JS TypesChecking via JSDoc, HTML docs generation for both Javascript and SCSS via jsDoc and sassDoc, plus the rest of the Zou! features:
 
 ```
-zou create myProject -full -vsc
+zou create myProject -full
 ```
 
 For TypeScript, don't use any flag and anwser to the prompt ;)
@@ -85,7 +87,7 @@ zou create myWebsite
 
 <details>
   <summary>Enable JSDoc & TypesCheck?</summary>
-  <p><strong><a href="https://jsdoc.app/">JSDoc</a><strong> brings TypesChecking to Vanilla JS, and great documentation. Two videos: <a href="https://www.youtube.com/watch?v=YK-GurROGIg">JSDoc Crash Course - Brad.Traversy</a> and <a href="https://www.youtube.com/watch?v=oH_-6TyxVhI">JSDoc TypesCheck in 15min - codeSTACKr</a>. Optional.</p>
+  <p><strong><a href="https://jsdoc.app/">JSDoc</a></strong> brings TypesChecking to Vanilla JS, and great documentation. Two videos: <a href="https://www.youtube.com/watch?v=YK-GurROGIg">JSDoc Crash Course - Brad.Traversy</a> and <a href="https://www.youtube.com/watch?v=oH_-6TyxVhI">JSDoc TypesCheck in 15min - codeSTACKr</a>. Optional.</p>
 </details>
 
 <details>

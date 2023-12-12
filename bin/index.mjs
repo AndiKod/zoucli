@@ -11,6 +11,7 @@ import rawlist from '@inquirer/rawlist';
 import fs from 'fs';
 import path from 'path';
 import process from "process";
+import child_process from 'child_process'
 
 import { URL } from 'url'; // in Browser, the URL in native accessible on window
 const __filename = new URL('', import.meta.url).pathname;
@@ -72,8 +73,9 @@ let scripts = "";
 let sassDoc = "";
 let jsDoc = "";
 let tests = "";
-let vscode = "";
-let install = "";
+let editor = "";
+let open = "";
+let types = "";
 
 
 
@@ -89,18 +91,43 @@ const project = `./${projectName}`;
 
 if (args[2] === '-y') {
 
+
   author = "DevMysterio";
   styles = "scss";
   scripts = "js";
   sassDoc = false;
   jsDoc = false;
   tests = false;
-  vscode = true;
-  install = false;
+  types = false;
+
 
   if (args[3] === '-vsc') {
+
     $`cd ${project} && code .`;
-  }
+
+  } else if (args[3] === '-vim') {
+
+    const file = project; 
+    const editor = 'vim';
+    const child = child_process.spawn(editor, [file], {
+        stdio: 'inherit'
+    });
+    child.on('exit', function (e, code) {
+        console.log("Happy Vim'ing");
+    });
+
+  } else if (args[3] === '-nvim') {
+
+    const file = project; 
+    const editor = 'nvim';
+    const child = child_process.spawn(editor, [file], {
+        stdio: 'inherit'
+    });
+    child.on('exit', function (e, code) {
+        console.log("Happy nVim'ing");
+    });
+
+  } 
 
 } else if (args[2] === '-tw') {
 
@@ -110,12 +137,73 @@ if (args[2] === '-y') {
   sassDoc = false;
   jsDoc = false;
   tests = false;
-  vscode = true;
-  install = false;
+  types = false;
 
   if (args[3] === '-vsc') {
+
     $`cd ${project} && code .`;
-  }
+
+  } else if (args[3] === '-vim') {
+
+    const file = project; 
+    const editor = 'vim';
+    const child = child_process.spawn(editor, [file], {
+        stdio: 'inherit'
+    });
+    child.on('exit', function (e, code) {
+        console.log("Happy Vim'ing");
+    });
+
+  } else if (args[3] === '-nvim') {
+
+    const file = project; 
+    const editor = 'nvim';
+    const child = child_process.spawn(editor, [file], {
+        stdio: 'inherit'
+    });
+    child.on('exit', function (e, code) {
+        console.log("Happy nVim'ing");
+    });
+
+  } 
+
+}  else if (args[2] === '-ts') {
+
+  author = "DevMysterio";
+  styles = "scss";
+  scripts = "ts";
+  sassDoc = false;
+  jsDoc = false;
+  tests = false;
+
+
+  if (args[3] === '-vsc') {
+
+    $`cd ${project} && code .`;
+
+  } else if (args[3] === '-vim') {
+
+    const file = project; 
+    const editor = 'vim';
+    const child = child_process.spawn(editor, [file], {
+        stdio: 'inherit'
+    });
+    child.on('exit', function (e, code) {
+        console.log("Happy Vim'ing");
+    });
+
+  } else if (args[3] === '-nvim') {
+
+    const file = project; 
+    const editor = 'nvim';
+    const child = child_process.spawn(editor, [file], {
+        stdio: 'inherit'
+    });
+    child.on('exit', function (e, code) {
+        console.log("Happy nVim'ing");
+    });
+
+  } 
 
 } else if (args[2] === '-full') {
 
@@ -125,11 +213,34 @@ if (args[2] === '-y') {
   sassDoc = true;
   jsDoc = true;
   tests = true;
-  vscode = true;
-  install = false;
+  types = true;
 
   if (args[3] === '-vsc') {
+
     $`cd ${project} && code .`;
+
+  } else if (args[3] === '-vim') {
+
+    const file = project; 
+    const editor = 'vim';
+    const child = child_process.spawn(editor, [file], {
+        stdio: 'inherit'
+    });
+    child.on('exit', function (e, code) {
+        console.log("Happy Vim'ing");
+    });
+
+  } else if (args[3] === '-nvim') {
+
+    const file = project; 
+    const editor = 'nvim';
+    const child = child_process.spawn(editor, [file], {
+        stdio: 'inherit'
+    });
+    child.on('exit', function (e, code) {
+        console.log("Happy nVim'ing");
+    });
+
   }
 
 } else {
@@ -174,24 +285,33 @@ if (args[2] === '-y') {
         ],
       }),
       sassDoc: await confirm({message: 'Enable sassDoc generation?', default: false}),
-      jsDoc: await confirm({message: 'Enable JSDoc & TypesCheck?', default: false}),
+      jsDoc: await confirm({message: 'Enable JSDoc generation?', default: false}),
       tests: await confirm({message: 'Enable JS Testing with Jest?', default: false}),
+      types: await confirm({message: 'TypesChecking via JSDoc ?', default: false}),
 
-      vscode: await select({
-        message: 'Open in VSCode?',
+      editor: await select({
+        message: 'Your code Editor',
         choices: [
           { 
-            name: 'Sure, why not', 
-            value: 'yep',
-            description: 'Will "code ." from root'
+            name: 'VSCode', 
+            value: 'vsc',
+            description: 'The easy bet.'
           },
-          { name: 'Nope', 
-            value: 'nope',
-            description: 'I\'ll do it, my way.'
+          { name: 'Vim', 
+            value: 'vim',
+            description: 'Tradition & keyboard fun.'
+          },
+          { name: 'neoVim', 
+            value: 'nvim',
+            description: 'NeoVim, for the modernists.'
+          },
+          { name: 'Other, you won\'t believe it!', 
+            value: 'other',
+            description: 'Whatever, it doesn`t matter :)'
           },
         ],
       }),
-      install: await confirm({message: 'Auto npm-install/run?', default: false})
+      open: await confirm({message: 'Open the project in the Editor ?', default: false})
     };
 
 
@@ -201,8 +321,9 @@ if (args[2] === '-y') {
   sassDoc = answers.sassDoc;
   jsDoc = answers.jsDoc;
   tests = answers.tests;
-  vscode = answers.vscode;
-  install = answers.install;
+  editor = answers.editor;
+  open = answers.open;
+  types = answers.types;
 
 }
 
@@ -447,7 +568,7 @@ if (styles == 'scss') {
   </figure>
   <main style="display:grid;justify-content: center;text-align:center;margin-top:3rem;">
     <figure>
-      <img src="https://zoujs.vercel.app/static/images/z.png" width="50px">
+      <img src="https://infinidad.fr/projets/media/z.png" width="50px">
     </figure>
     <h1>Zou!<span>JS</span></h1>
     <h2 title="Click on me ;)" _="on click call alert('///_Hyperscript is Working!')">${projectName} project by ${author}</h2>
@@ -501,7 +622,7 @@ if (styles == 'scss') {
 
   indexPage = `
   <main style="display:grid;justify-content: center;text-align:center;margin-top:3rem;">
-    <img src="https://zoujs.vercel.app/static/images/z.png" width="50px" class="mx-auto mt-8">
+    <img src="https://infinidad.fr/projets/media/z.png" width="50px" class="mx-auto mt-8">
     <h1>Zou!<span>JS</span></h1>
     <h2 title="Click on me ;)" _="on click call alert('///_Hyperscript is Working!')">${projectName} project by ${author}</h2>
     <nav style="margin-top:1.5rem;font-family:sans-serif;">
@@ -581,10 +702,6 @@ fs.writeFile(pgPagesIndex, pgPagesIndexContent, (err) => {
 *   --- SCRIPTS ---
 */
 
-/* 
-*  Creating the Docs folder & index, 
-*  only if it's not a Tailwing + TypeScript project
-*/
 
 if (jsDoc || sassDoc) {
 
@@ -671,18 +788,23 @@ if (jsDoc) {
 
   fs.mkdirSync(project + '/docs/jsTuts');  
 
-  let tsConfig = project + '/tsconfig.json';
-  let tsConfigContent = `{
-  "compilerOptions": {
-    "allowJs": true,
-    "checkJs": true,
-    "strict": true
+
+  // If types checking is required
+  if (types) {
+    let tsConfig = project + '/tsconfig.json';
+    let tsConfigContent = `{
+    "compilerOptions": {
+      "allowJs": true,
+      "checkJs": true,
+      "strict": true
+    }
+    }`;
+    fs.writeFile(tsConfig, tsConfigContent, (err) => {
+      if (err) throw err;
+      // tsconfig.json Created!
+    });
   }
-  }`;
-  fs.writeFile(tsConfig, tsConfigContent, (err) => {
-    if (err) throw err;
-    // tsconfig.json Created!
-  });
+  
 
   // FILE: --- jsdoc.json ---
 
@@ -1446,7 +1568,7 @@ if (jsDoc) {
 // --- sassDoc ---
 
 if (sassDoc) {
-  sassdocScript = `"d-sass": "sassdoc src/styles/**/* -d ./docs/sassdoc",`;
+  sassdocScript = `"d-sass": "sassdoc src/styles/**/*.scss -d ./docs/sassdoc",`;
 
   if (!docsScript) {
     docsScript = `"docs": "npm-run-all --parallel d-*"`;
@@ -1520,30 +1642,49 @@ fs.writeFile(pkgJson, pkgJsonContent, (err) => {
 
 
 
-if (install) {
+if (open) {
 
-  console.log(chalk.bold.magenta('\nLet\'s Go!') + " ..."+ chalk.italic('Zou! steaming, let him cook ;)') )
-  console.log('||| Building. Give it a little minute.\n')
-  if (vscode == 'yep') {
-    $`cd ${projectName} && code . && npm install && npm run dev`;
-  } else {
-    $`cd ${projectName} && npm install && npm run dev`;
-  } 
-   
-} else {
-
-  if (vscode == 'yep') {
-    console.log(chalk.bold.magenta('\nLet\'s Go!') + " ..."+ chalk.italic('When ready:') )
-    console.log(chalk.bold('pnpm')+', yarn or npm install,')
-    console.log('...then '+ chalk.italic('run dev')+'\n')
+  if (editor == 'vsc') {
 
     $`cd ${projectName} && code .`;
-  } else {
+
+  } else if (editor == 'vim') {
+
+    const file = project; 
+    const editor = 'vim';
+    const child = child_process.spawn(editor, [file], {
+        stdio: 'inherit'
+    });
+    child.on('exit', function (e, code) {
+        console.log("Happy Vim'ing");
+    });
+
+  } else if (editor == 'nvim') {
+
+    const file = project; 
+    const editor = 'nvim';
+    const child = child_process.spawn(editor, [file], {
+        stdio: 'inherit'
+    });
+    child.on('exit', function (e, code) {
+        console.log("neoVim in the House!");
+    });
+
+  } else if (editor == 'other') {
+
     console.log(chalk.bold.magenta('\nLet\'s Go!') + " ..."+ chalk.italic('When ready:') )
     console.log(`> cd ${projectName}`)
     console.log(chalk.bold('pnpm')+', yarn or npm install,')
     console.log('...then '+ chalk.italic('run dev')+'\n')
-  }
+
+  } 
+   
+} else {
+
+    console.log(chalk.bold.magenta('\nLet\'s Go!') + " ..."+ chalk.italic('When ready:') )
+    console.log(`> cd ${projectName}`)
+    console.log(chalk.bold('pnpm')+', yarn or npm install,')
+    console.log('...then '+ chalk.italic('run dev')+'\n')
 
 }
 
