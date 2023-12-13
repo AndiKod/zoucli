@@ -568,7 +568,7 @@ if (styles == 'scss') {
   </figure>
   <main style="display:grid;justify-content: center;text-align:center;margin-top:3rem;">
     <figure>
-      <img src="https://infinidad.fr/projets/media/z.png" width="50px">
+      <img src="https://zoujs.vercel.app/static/images/z.png" width="50px">
     </figure>
     <h1>Zou!<span>JS</span></h1>
     <h2 title="Click on me ;)" _="on click call alert('///_Hyperscript is Working!')">${projectName} project by ${author}</h2>
@@ -1606,9 +1606,9 @@ let pkgJsonContent = `{
     "w-pages": "onchange \\"./src/**/*\\" -- npm run b-pages",
     "bin": "node bin/db",
     "watch": "npm-run-all --parallel w-*",
-    "build": "npm-run-all bin --parallel b-*",
+    "build": "npm-run-all copy bin --parallel b-*",
     "serve": "alive-server public",
-    "dev": "npm-run-all bin copy b-pages --parallel watch serve",
+    "dev": "npm-run-all copy bin b-pages --parallel watch serve",
     "postbuild": "postcss public/*.css -u autoprefixer cssnano -r --no-map" 
   },
   "dependencies": {},
