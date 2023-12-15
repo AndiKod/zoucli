@@ -6,7 +6,7 @@
 
 Scaffold a custom Zou! SSG project and more, with interactive prompts.
 
-*— Prononced like 'zoo' or 'zu' in italian/romanian,...*<br>
+*— Prononced more or less like 'zoo' ...*<br>
 *Zou! is a french interjection that stands for: JustDoIt! GoAhead! Let'sGo!*
 
 Simple SSG with close to zero configuration, going back to the basics.

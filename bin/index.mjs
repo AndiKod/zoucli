@@ -103,7 +103,7 @@ if (args[2] === '-y') {
 
   if (args[3] === '-vsc') {
 
-    $`cd ${project} && code .`;
+    $`cd ${projectName} && code .`;
 
   } else if (args[3] === '-vim') {
 
@@ -124,7 +124,7 @@ if (args[2] === '-y') {
         stdio: 'inherit'
     });
     child.on('exit', function (e, code) {
-        console.log("Happy nVim'ing");
+        console.log("Team NeoVim");
     });
 
   } 
@@ -141,7 +141,7 @@ if (args[2] === '-y') {
 
   if (args[3] === '-vsc') {
 
-    $`cd ${project} && code .`;
+    $`cd ${projectName} && code .`;
 
   } else if (args[3] === '-vim') {
 
@@ -162,7 +162,7 @@ if (args[2] === '-y') {
         stdio: 'inherit'
     });
     child.on('exit', function (e, code) {
-        console.log("Happy nVim'ing");
+        console.log("Team NeoVim");
     });
 
   } 
@@ -179,7 +179,7 @@ if (args[2] === '-y') {
 
   if (args[3] === '-vsc') {
 
-    $`cd ${project} && code .`;
+    $`cd ${projectName} && code .`;
 
   } else if (args[3] === '-vim') {
 
@@ -200,7 +200,7 @@ if (args[2] === '-y') {
         stdio: 'inherit'
     });
     child.on('exit', function (e, code) {
-        console.log("Happy nVim'ing");
+        console.log("Team NeoVim");
     });
 
   } 
@@ -217,7 +217,7 @@ if (args[2] === '-y') {
 
   if (args[3] === '-vsc') {
 
-    $`cd ${project} && code .`;
+    $`cd ${projectName} && code .`;
 
   } else if (args[3] === '-vim') {
 
@@ -238,7 +238,7 @@ if (args[2] === '-y') {
         stdio: 'inherit'
     });
     child.on('exit', function (e, code) {
-        console.log("Happy nVim'ing");
+        console.log("Team NeoVim");
     });
 
   }
@@ -622,7 +622,7 @@ if (styles == 'scss') {
 
   indexPage = `
   <main style="display:grid;justify-content: center;text-align:center;margin-top:3rem;">
-    <img src="https://infinidad.fr/projets/media/z.png" width="50px" class="mx-auto mt-8">
+    <img src="https://zoujs.vercel.app/static/images/z.png" width="50px" class="mx-auto mt-8">
     <h1>Zou!<span>JS</span></h1>
     <h2 title="Click on me ;)" _="on click call alert('///_Hyperscript is Working!')">${projectName} project by ${author}</h2>
     <nav style="margin-top:1.5rem;font-family:sans-serif;">
@@ -792,13 +792,13 @@ if (jsDoc) {
   // If types checking is required
   if (types) {
     let tsConfig = project + '/tsconfig.json';
-    let tsConfigContent = `{
-    "compilerOptions": {
-      "allowJs": true,
-      "checkJs": true,
-      "strict": true
-    }
-    }`;
+let tsConfigContent = `{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "strict": true
+  }
+}`;
     fs.writeFile(tsConfig, tsConfigContent, (err) => {
       if (err) throw err;
       // tsconfig.json Created!
@@ -1212,7 +1212,7 @@ body.dark {
 
 // Light theme
 body.light {
-  --bg: linear-gradient(-45deg, #e7c6bb, rgb(173, 226, 188), #dcf0c1);
+  --bg: linear-gradient(-45deg, #e7c6bb, #ade2bc, #dcf0c1);
   --brand: var(--lime-6);
   --surface-1: var(--sand-0);
   --text-1: var(--sand-10);
@@ -1330,7 +1330,6 @@ body.light {
   
 
 }
-
 
 
 
