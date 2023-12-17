@@ -29,6 +29,9 @@ No JS framework, no mega-bundler, almost nothing new to learn beyond HTML, CSS, 
 | **Tests** | *-if enabled-* A default folder for *thing.test.js* files, but it's up to you |
 
 
+_PS: The package used to convert nunjucks is using cjs, so the zou.config.js is still using that syntax for the moment, but the main JS file is imported as Module, so we can go ESM there. At some point will eventually find a way to go fully ESM accros the board but things are working smoothly enough already._
+
+
 
 
 ## Scaffold a new Zou! project, the "one liner way"
